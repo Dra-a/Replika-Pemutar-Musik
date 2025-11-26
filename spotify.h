@@ -31,6 +31,7 @@ struct user_info {
     string user_name;
     int playlist_count;
     bool isAdmin;
+    Library library_musik;
 };
 
 //Tipe Address dan Struct Elemen Linked List
