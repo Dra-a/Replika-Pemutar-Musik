@@ -86,6 +86,7 @@ songAddress createSong(song_info info);
 void insertSong(Library &L, songAddress P);
 void deleteSong(Library &L, string song_name);
 songAddress findSong(Library L, string song_name);
+void sortSong(Library &L);
 
 // Function dan Procedure Playlist
 playlistAddress createPlaylist(playlist_info info);
