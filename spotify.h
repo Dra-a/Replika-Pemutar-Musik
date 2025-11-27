@@ -81,6 +81,8 @@ struct Artists {
     artistAddress first;
 };
 
+void createLibrary(Library &L);
+
 // Function dan Procedure Lagu
 songAddress allocateSong(song_info info);
 void insertSong(Library &L, songAddress P);
