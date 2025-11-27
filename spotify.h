@@ -82,23 +82,23 @@ struct Artists {
 };
 
 // Function dan Procedure Lagu
-songAddress createSong(song_info info);
+songAddress allocateSong(song_info info);
 void insertSong(Library &L, songAddress P);
 void deleteSong(Library &L, string song_name);
 songAddress findSong(Library L, string song_name);
 void sortSong(Library &L);
 
 // Function dan Procedure Playlist
-playlistAddress createPlaylist(playlist_info info);
+playlistAddress allocatePlaylist(playlist_info info);
 void addSongToPlaylist(playlistAddress &P, songAddress song);
 void removeSongFromPlaylist(playlistAddress &P, string song_name);
 
 // Function dan Procedure Artist
-artistAddress createArtist(artist_info info);
+artistAddress allocateArtist(artist_info info);
 void addSongToArtist(artistAddress &A, songAddress song);
 
 // Function dan Procedure User
-userAddress createUser(user_info info);
+userAddress allocateUser(user_info info);
 void insertUser(Users &U, userAddress P);
 userAddress findUser(Users U, int user_name);
 
