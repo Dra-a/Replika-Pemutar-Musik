@@ -51,6 +51,7 @@ struct Library {
 
 struct Users {
     userAddress first;
+    userAddress last;
 };
 
 struct Artists {
