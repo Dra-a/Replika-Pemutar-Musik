@@ -14,7 +14,7 @@ songAddress allocateSong(song_info info){
     return P;
 }
 
-void insertSong(Library &L, songAddress P){
+void addSong(Library &L, songAddress P){
     if (L.first == nullptr && L.last == nullptr){
         L.first = P;
         L.last = P;
