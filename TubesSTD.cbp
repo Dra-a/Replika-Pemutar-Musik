@@ -33,6 +33,8 @@
 			<Add option="-fexceptions" />
 		</Compiler>
 		<Unit filename="main.cpp" />
+		<Unit filename="spotify.cpp" />
+		<Unit filename="spotify.h" />
 		<Extensions />
 	</Project>
 </CodeBlocks_project_file>

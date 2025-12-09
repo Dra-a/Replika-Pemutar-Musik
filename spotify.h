@@ -82,27 +82,27 @@ songAddress findSong(Library L, string song_name);
 
 void deleteSongFromLibrary(Library &L, songAddress &P);
 void editSongFromLibrary(Library &L, songAddress &P);
-void displayLibrary(Library L);
-void sortSong(Library &L);
+void displayLibrary(Library L);                             //belum
+void sortSong(Library &L);                                  //belum
 
 // Function dan Procedure Playlist
-playlistAddress allocatePlaylist(playlist_info info);
+playlistAddress allocatePlaylist(playlist_info info);       //belum
 void addPlaylist(userAddress &P, playlistAddress Q);
-void deletePlaylist(userAddress &P, string playlist_name, playlistAddress &Q);
-void editPlaylist(userAddress &P, string playlist_name);
-void displayPlaylists(userAddress P)
+void deletePlaylist(userAddress &P, playlistAddress Q);     //belum
+void editPlaylist(userAddress &P, string playlist_name);                        //belum
+void displayPlaylists(userAddress P);                                           //belum
+void displayArtist(Artists P);                                                  //belum
 
-void displaySongsInPlaylist(playlistAddress P);
+void displaySongsInPlaylist(playlistAddress P);                                 //belum
 void addSongToPlaylist(playlistAddress &P, songAddress song);
-void removeSongFromPlaylist(playlistAddress &P, string song_name);
+void removeSongFromPlaylist(playlistAddress &P, songAddress song);              //belum
 
 // Function dan Procedure User
-userAddress allocateUser(user_info info);
+userAddress allocateUser(user_info info);                       //belum
 void addUser(Users &U, userAddress P);
-userAddress findUser(Users U, int user_name);
+userAddress findUser(Users U, int user_name);                   //belum
 
 // Function dan Procedure Fitur Tambahan
 songAddress findSimilarSong(Library L, songAddress current_song);
-
 
 #endif // SPOTIFY_H_INCLUDED
