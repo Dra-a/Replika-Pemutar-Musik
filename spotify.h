@@ -1,15 +1,16 @@
 #ifndef SPOTIFY_H_INCLUDED
 #define SPOTIFY_H_INCLUDED
 #include <string>
+using namespace std;
 
-struct time {
+struct waktu {
     int menit, detik;
-}
+};
 
 // Tipe Struct Infotype untuk Elemen Linked List
 struct song_info {
     string song_name, artist_name;
-    time duration;
+    waktu duration;
     int times_played;
 };
 
@@ -34,14 +35,14 @@ struct songElement {
 typedef struct playlistElement *playlistAddress;
 struct playlistElement {
     playlist_info info;
-    playlistAddress next_playlist;
-    songAddress first_song;
+    playlistAddress next;
+    relasiMLLAddress first_song;
 };
 
-typedef struct songElementMLL *songAddressMLL;
-struct songElementMLL {
+typedef struct relasiMLL *relasiMLLAddress;
+struct relasiMLL {
     songAddress song_pointer;
-    songAddressMLL next_song, prev_song;
+    relasiMLLAddress next, prev;
 };
 
 // Tipe List
@@ -63,7 +64,7 @@ struct Artists {
 typedef struct userElement *userAddress;
 struct userElement {
     user_info info;
-    userAddress next_user;
+    userAddress next;
     playlistAddress first_playlist;
     Library library;
     Artists artists;
@@ -75,12 +76,13 @@ void createUsers(Users &U);
 
 // Function dan Procedure Lagu
 songAddress allocateSong(song_info info);
-void addSong(Library &L, songAddress P);
-void deleteSong(Library &L, string song_name, songAddress &P);
-void editSong(Library &L, string song_name);
-void displayLibrary(Library L);
-
+void addSongToLibrary(Library &L, songAddress P);
+void AddSongToArtists(Artists &A, songAddress P);
 songAddress findSong(Library L, string song_name);
+
+void deleteSongFromLibrary(Library &L, songAddress &P);
+void editSongFromLibrary(Library &L, songAddress &P);
+void displayLibrary(Library L);
 void sortSong(Library &L);
 
 // Function dan Procedure Playlist
