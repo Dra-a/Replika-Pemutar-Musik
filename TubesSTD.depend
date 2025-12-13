@@ -1,16 +1,16 @@
 # depslib dependency file v1.0
-1765659441 source:d:\cood\tubesstd\replika-pemutar-musik\spotify.cpp
+1765663956 source:d:\cood\tubesstd\replika-pemutar-musik\spotify.cpp
 	"spotify.h"
 	<iostream>
 	<string>
 	<iomanip>
 
-1765658674 d:\cood\tubesstd\replika-pemutar-musik\spotify.h
+1765663864 d:\cood\tubesstd\replika-pemutar-musik\spotify.h
 	<iostream>
 	<string>
 	<iomanip>
 
-1765658984 source:d:\cood\tubesstd\replika-pemutar-musik\main.cpp
+1765663990 source:d:\cood\tubesstd\replika-pemutar-musik\main.cpp
 	"spotify.h"
 	<string>
 	<iomanip>

@@ -86,6 +86,7 @@ void displayLibrary(Library L, int page, int n);
 // Function dan Procedure Playlist
 playlistAddress allocatePlaylist(playlist_info info);
 void addPlaylist(userAddress &P, playlistAddress Q);
+void addArtist(Artists &A, playlistAddress P);
 void deletePlaylist(userAddress &P, playlistAddress Q);
 //void editPlaylist(userAddress &P, string playlist_name);                        //belum
 void displayPlaylists(userAddress U, int page, int n);
@@ -121,5 +122,5 @@ void playFromLibrary(Library L, int page, int n, Artists A, int song_number, rel
 void stopSong(bool &isPlaying);
 void nextSong(relasiMLLAddress &current, bool &isPlaying);
 void prevSong(relasiMLLAddress &current, bool &isPlaying);
-void nowPlays(bool isPlaying, int width);
+void nowPlays(bool isPlaying, int width, relasiMLLAddress currentSong);
 #endif // SPOTIFY_H_INCLUDED

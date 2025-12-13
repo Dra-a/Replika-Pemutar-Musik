@@ -84,6 +84,19 @@ void addSongToLibrary(Library &L, songAddress P){
     }
 }
 
+void addArtist(Artists &A, playlistAddress P){
+    //Menambahkan playlistElement yang ditunjuk oleh P ke dalam List Artists
+    if (A.first == nullptr){
+        A.first = P;
+    } else{
+        playlistAddress temp = A.first;
+        while (temp->next != nullptr){
+            temp = temp->next;
+        }
+        temp->next = P;
+    }
+}
+
 void AddSongToArtists(Artists &A, songAddress P) {
     //Menambahkan songElement yang ditunjuk oleh P ke dalam playlist yang ada di List Artists
     //berdasarkan nama artisnya
@@ -102,8 +115,10 @@ void AddSongToArtists(Artists &A, songAddress P) {
         info.playlist_name = nama;
         info.playlist_size = 0;
         playlistAddress PL = allocatePlaylist(info);
+        addArtist(A, PL);
 
         addSongToPlaylist(PL, P);
+        PL->info.playlist_size += 1;
     }
 }
 
@@ -237,13 +252,17 @@ void addSongToPlaylist(playlistAddress &P, songAddress song){
         P->first_song = R;
     } else{
         relasiMLLAddress temp = P->first_song;
-        while (temp->next != nullptr){
+        while (temp->next != nullptr && temp->song_pointer != song){
             temp = temp->next;
         }
-        temp->next = R;
-        R->prev = temp;
+        if (temp->next == nullptr && temp->song_pointer != song){
+            temp->next = R;
+            R->prev = temp;
+            P->info.playlist_size += 1;
+        } else {
+            cout << "Lagu sudah ada di dalam playlist!" << endl;
+        }
     }
-    P->info.playlist_size += 1;
 }
 
 void deletePlaylist(userAddress &P, playlistAddress Q) {
@@ -357,12 +376,11 @@ void displayLibrary(Library L, int page, int n) {
     cout << "┌────────────────────────────────────────────┐" << endl;
     cout << "│ [H]ome │            [F]ind Song            │" << endl;
     cout << "├────────────────────────────────────────────┤" << endl;
-    for (i=start; i<=end; i++) {
-        if (p == nullptr) {
-            break;
-        }
-        displaySongInfo(p, i%n);
+    i = start;
+    while (i <= end && p != nullptr) {
+        displaySongInfo(p, i%(n));
         p = p->next;
+        i = i + 1;
     }
     cout << "│                                            │" << endl;
     cout << "│ [P]rev     Showing page " << page << " of " << totalPages << "     [N]ext  │" << endl;
@@ -430,9 +448,11 @@ void displaySongsInPlaylist(playlistAddress P, int page, int n) {
     centerText(P->info.playlist_name, 35);
     cout << "│" << endl;
     cout << "├────────────────────────────────────────────┤" << endl;
-    for (i=start; i<=end; i++) {
-        displaySongInfo(R->song_pointer, i%n);
+    i = start;
+    while (i <= end && R != nullptr) {
+        displaySongInfo(R->song_pointer, i%(n));
         R = R->next;
+        i = i + 1;
     }
     cout << "│                                            │" << endl;
     cout << "│ [P]rev     Showing page " << page << " of " << totalPages << "     [N]ext  │" << endl;
@@ -443,7 +463,7 @@ void homePage(userAddress U, int width) {
     //Menampilkan halaman utama setelah user berhasil login
     cout << "┌────────────────────────────────────────────┐" << endl;
     cout << "│";
-    centerText("Welcome, " + U->info.user_name, U->info.user_name.length() + 2);
+    centerText("Welcome, " + U->info.user_name, width);
     cout << "│" << endl;
     cout << "└────────────────────────────────────────────┘" << endl;
     cout << "┌────────────────────────────────────────────┐" << endl;
@@ -515,15 +535,15 @@ void prevSong(relasiMLLAddress &current, bool &isPlaying) {
     }
 }
 
-void nowPlays(bool isPlaying, int width) {
+void nowPlays(bool isPlaying, int width, relasiMLLAddress currentSong) {
     if (isPlaying) {
         cout << "┌────────────────────────────────────────────┐" << endl;
-        cout << "│                 Now Playing                │" << endl;
+        cout << "│                Now Playing                 │" << endl;
         cout << "│";
-        centerText("Home Page", width-2);
+        centerText(currentSong->song_pointer->info.song_name, width);
         cout << "│" << endl;
         cout << "├────────────────────────────────────────────┤" << endl;
-        cout << "│    [P]rev    |    [S]top    |    [N]ext    │" << endl;
+        cout << "│    [p]rev    |    [s]top    |    [n]ext    │" << endl;
         cout << "└────────────────────────────────────────────┘" << endl;
     }
 }
@@ -534,9 +554,8 @@ void displayPlayListInfo(playlistAddress P, int number) {
 
     cout << "│ [" << number << "] ";
     cout << setfill(' ') << setw(maxTitleLength) << left << P->info.playlist_name << " │\n";
-    cout << "│";
-    cout << "│     " << setfill('0') << setw(2) << left << P->info.playlist_size << " Songs";
-    cout << setfill(' ') << setw(12) << "│" << endl;
+    cout << "│     " << setfill('0') << setw(2) << right << P->info.playlist_size << " Songs";
+    cout << setfill(' ') << setw(34) << right << "│" << endl;
     cout << "│ · · · · · · · · · · · · · · · · · · · · ·  │" << endl;
 }
 
@@ -557,9 +576,11 @@ void displayArtist(Artists A, int page, int n) {
     cout << "┌────────────────────────────────────────────┐" << endl;
     cout << "│ [H]ome │              Artists              │" << endl;
     cout << "├────────────────────────────────────────────┤" << endl;
-    for (i=start; i<=end; i++) {
-        displayPlayListInfo(P, i%n);
+    i = start;
+    while (i <= end && P != nullptr) {
+        displayPlayListInfo(P, i%(n));
         P = P->next;
+        i = i + 1;
     }
     cout << "│                                            │" << endl;
     cout << "│ [P]rev     Showing page " << page << " of " << totalPages << "     [N]ext  │" << endl;
@@ -583,9 +604,11 @@ void displayPlaylists(userAddress pU, int page, int n) {
     cout << "┌────────────────────────────────────────────┐" << endl;
     cout << "│ [H]ome │           Your Playlists          │" << endl;
     cout << "├────────────────────────────────────────────┤" << endl;
-    for (i=start; i<=end; i++) {
-        displayPlayListInfo(P, i%n);
+    i = start;
+    while (i <= end && P != nullptr) {
+        displayPlayListInfo(P, i%(n));
         P = P->next;
+        i = i + 1;
     }
     cout << "│                                            │" << endl;
     cout << "│ [P]rev     Showing page " << page << " of " << totalPages << "     [N]ext  │" << endl;
