@@ -4,12 +4,7 @@
 #include <iostream>
 #include <string>
 #include <iomanip>
-#include <windows.h>
 using namespace std;
-
-#ifdef _WIN32
-SetConsoleOutputCP(CP_UTF8);
-#endif
 
 struct waktu {
     int menit, detik;

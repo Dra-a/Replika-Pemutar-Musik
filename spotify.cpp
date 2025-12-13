@@ -2,12 +2,8 @@
 #include <iostream>
 #include <string>
 #include <iomanip>
-#include <windows.h>
-using namespace std;
 
-#ifdef _WIN32
-SetConsoleOutputCP(CP_UTF8);
-#endif
+using namespace std;
 
 void createLibrary(Library &L){
     //Membuat List Library yang memiliki pointer first dan last
@@ -161,7 +157,7 @@ void editSongFromLibrary(Library &L, songAddress &P) {
     cout << "Esc" << endl;
     int pilihan;
     cin >> pilihan;
-    
+
     if (pilihan == 1) {
         cout << "Masukkan nama lagu yang baru" << endl;
         cin >> newInfo.song_name;
@@ -290,12 +286,13 @@ void centerText(const string text, int width) {
 void displaySongInfo(songAddress P, int number) {
     //Menampilkan informasi dari suatu lagu dalam format yang rapi
     int maxTitleLength = 38;
-    int maxArtistLength = 20;
+    int maxArtistLength = 32;
     cout << "│ [" << number << "] ";
     cout << setfill(' ') << setw(maxTitleLength) << left << P->info.song_name << " │\n";
-    cout << setfill(' ') << setw(maxArtistLength) << left << P->info.artist_name << " ";
-    cout << setfill('0') << setw(2) << left << P->info.duration.menit << ":";
-    cout << setfill('0') << setw(2) << left << P->info.duration.detik << "  │" << endl;
+    cout << "│     ";
+    cout << setfill(' ') << setw(maxArtistLength) << left << P->info.artist_name;
+    cout << setfill('0') << setw(2) << right << P->info.duration.menit << ":";
+    cout << setfill('0') << setw(2) << right << P->info.duration.detik << "  │" << endl;
     cout << "│ · · · · · · · · · · · · · · · · · · · · ·  │" << endl;
 }
 
@@ -361,6 +358,9 @@ void displayLibrary(Library L, int page, int n) {
     cout << "│ [H]ome │            [F]ind Song            │" << endl;
     cout << "├────────────────────────────────────────────┤" << endl;
     for (i=start; i<=end; i++) {
+        if (p == nullptr) {
+            break;
+        }
         displaySongInfo(p, i%n);
         p = p->next;
     }
@@ -480,7 +480,7 @@ relasiMLLAddress moveToSimilarSongs(Artists A, songAddress current_song) {
         cout << "Terdapat error saat memutar lagu tersebut." << endl;
         return artistPlaylist->first_song; // Kembalikan lagu pertama dari playlist artist sebagai default, seharusnya tidak akan terjadi
     }
-    
+
 }
 
 void playFromLibrary(Library L, int page, int n, Artists A, int song_number, relasiMLLAddress &current, bool &isPlaying) {

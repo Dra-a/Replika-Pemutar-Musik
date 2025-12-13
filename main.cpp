@@ -1,21 +1,28 @@
 #include "spotify.h"
-#include <iostream>
 #include <string>
 #include <iomanip>
 #include <windows.h>
+#include <iostream>
 using namespace std;
 
-#ifdef _WIN32
-SetConsoleOutputCP(CP_UTF8);
-#endif
-
 int main() {
+    #ifdef _WIN32
+    SetConsoleOutputCP(CP_UTF8);
+    #endif
+
     Library L;
     Users U;
     Artists A;
     createLibrary(L);
     createUsers(U);
     createArtists(A);
+
+    user_info adminInfo;
+    adminInfo.user_name = "admin";
+    adminInfo.playlist_count = 0;
+    adminInfo.isAdmin = true;
+    userAddress adminUser = allocateUser(adminInfo);
+    addUser(U, adminUser);
 
     int box_width = 44;
     string pilihanMenu = "";
@@ -215,7 +222,7 @@ int main() {
                             string pilihanSong = "";
                             int pageSong = 1;
                             while (pilihanSong != "H") {
-                                displaySongsInPlaylist(selectedPlaylist, pageSong, contentPerPage); 
+                                displaySongsInPlaylist(selectedPlaylist, pageSong, contentPerPage);
                                 cin >> pilihanSong;
                                 if (pilihanSong >= "1" && pilihanSong <= "5") {
                                     int song_num = stoi(pilihanSong);
@@ -255,7 +262,7 @@ int main() {
                             string pilihanSong = "";
                             int pageSong = 1;
                             while (pilihanSong != "H") {
-                                displaySongsInPlaylist(selectedPlaylist, pageSong, contentPerPage); 
+                                displaySongsInPlaylist(selectedPlaylist, pageSong, contentPerPage);
                                 cin >> pilihanSong;
                                 if (pilihanSong >= "1" && pilihanSong <= "5") {
                                     int song_num = stoi(pilihanSong);
