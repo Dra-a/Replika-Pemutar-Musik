@@ -342,9 +342,9 @@ int getPlaylistCount(userAddress U) {
 
 void displayLibrary(Library L, int page, int n) {
     //Menampilkan seluruh lagu yang ada di dalam Library
-    page = page - 1; //Mengubah halaman agar sesuai dengan index (dimulai dari 0)
-    int start = page * n + 1;
-    int end = page * n + n;
+    //Mengubah halaman agar sesuai dengan index (dimulai dari 0)
+    int start = (page-1) * n + 1;
+    int end = (page-1) * n + n;
     int size = getLibrarySize(L);
     int totalPages = (size + n - 1) / n;
     songAddress p = L.first;
@@ -415,9 +415,9 @@ playlistAddress getArtistPlaylistFromArtists(Artists A, int page, int n, int pla
 
 void displaySongsInPlaylist(playlistAddress P, int page, int n) {
     //Menampilkan seluruh lagu yang ada di dalam Playlist
-    page = page - 1; //Mengubah halaman agar sesuai dengan index (dimulai dari 0)
-    int start = page * n + 1;
-    int end = page * n + n;
+    //Mengubah halaman agar sesuai dengan index (dimulai dari 0)
+    int start = (page-1) * n + 1;
+    int end = (page-1) * n + n;
     int totalPages = (P->info.playlist_size + n - 1) / n;
     relasiMLLAddress R = P->first_song;
     int i;
@@ -542,9 +542,9 @@ void displayPlayListInfo(playlistAddress P, int number) {
 
 void displayArtist(Artists A, int page, int n) {
     //Menampilkan seluruh playlist artist yang ada di dalam Artists
-    page = page - 1; //Mengubah halaman agar sesuai dengan index (dimulai dari 0)
-    int start = page * n + 1;
-    int end = page * n + n;
+    //Mengubah halaman agar sesuai dengan index (dimulai dari 0)
+    int start = (page-1) * n + 1;
+    int end = (page-1) * n + n;
     int size = getArtistsCount(A);
     int totalPages = (size + n - 1) / n;
 
@@ -568,9 +568,9 @@ void displayArtist(Artists A, int page, int n) {
 
 void displayPlaylists(userAddress pU, int page, int n) {
     //Menampilkan seluruh playlist yang ada di dalam Playlist milik User
-    page = page - 1; //Mengubah halaman agar sesuai dengan index (dimulai dari 0)
-    int start = page * n + 1;
-    int end = page * n + n;
+    //Mengubah halaman agar sesuai dengan index (dimulai dari 0)
+    int start = (page-1) * n + 1;
+    int end = (page-1) * n + n;
     int size = getPlaylistCount(pU);
     int totalPages = (size + n - 1) / n;
 
