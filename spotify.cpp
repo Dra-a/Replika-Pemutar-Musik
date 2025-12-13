@@ -1,7 +1,13 @@
 #include "spotify.h"
 #include <iostream>
 #include <string>
+#include <iomanip>
+#include <windows.h>
 using namespace std;
+
+#ifdef _WIN32
+SetConsoleOutputCP(CP_UTF8);
+#endif
 
 void createLibrary(Library &L){
     //Membuat List Library yang memiliki pointer first dan last
@@ -270,4 +276,183 @@ userAddress findUser(Users U, string user_name){
         P = P->next;
     }
     return nullptr;
+}
+
+void centerText(const string text, int width) {
+    //Mencetak teks yang di tengah-tengah dengan lebar tertentu
+    int padding = width - text.length();
+    int padLeft = padding / 2;
+    int padRight = padding - padLeft;
+    cout << setfill(' ') << setw(padLeft + text.length()) << right << text;
+    cout << setw(padRight) << "" << left;
+}
+
+void displaySongInfo(songAddress P, int number) {
+    //Menampilkan informasi dari suatu lagu dalam format yang rapi
+    int maxTitleLength = 38;
+    int maxArtistLength = 20;
+    cout << "│ [" << number << "] ";
+    cout << setfill(' ') << setw(maxTitleLength) << left << P->info.song_name << " │\n";
+    cout << setfill(' ') << setw(maxArtistLength) << left << P->info.artist_name << " ";
+    cout << setfill('0') << setw(2) << left << P->info.duration.menit << ":";
+    cout << setfill('0') << setw(2) << left << P->info.duration.detik << "  │" << endl;
+    cout << "│ · · · · · · · · · · · · · · · · · · · · ·  │" << endl;
+}
+
+int getLibrarySize(Library L) {
+    //Menghitung jumlah lagu yang ada di dalam Library
+    int size = 0;
+    songAddress P = L.first;
+    while (P != nullptr) {
+        size++;
+        P = P->next;
+    }
+    return size;
+}
+
+int getPlaylistSize(playlistAddress P) {
+    //Menghitung jumlah lagu yang ada di dalam Playlist
+    int size = 0;
+    relasiMLLAddress R = P->first_song;
+    while (R != nullptr) {
+        size++;
+        R = R->next;
+    }
+    return size;
+}
+
+void displayLibrary(Library L, int page, int n) {
+    //Menampilkan seluruh lagu yang ada di dalam Library
+    page = page - 1; //Mengubah halaman agar sesuai dengan index (dimulai dari 0)
+    int start = page * n + 1;
+    int end = page * n + n;
+    int size = getLibrarySize(L);
+    int totalPages = (size + n - 1) / n;
+    songAddress p = L.first;
+    int i;
+
+    for (i=1; i<start; i++) {
+        p = p->next;
+    }
+
+    cout << "┌────────────────────────────────────────────┐" << endl;
+    cout << "│ [H]ome │            [F]ind Song            │" << endl;
+    cout << "├────────────────────────────────────────────┤" << endl;
+    for (i=start; i<=end; i++) {
+        displaySongInfo(p, i%n);
+        p = p->next;
+    }
+    cout << "│                                            │" << endl;
+    cout << "│ [P]rev     Showing page " << page << " of " << totalPages << "     [N]ext  │" << endl;
+    cout << "└────────────────────────────────────────────┘" << endl;
+}
+
+void displaySongsInPlaylist(playlistAddress P, int page, int n) {
+    //Menampilkan seluruh lagu yang ada di dalam Playlist
+    page = page - 1; //Mengubah halaman agar sesuai dengan index (dimulai dari 0)
+    int start = page * n + 1;
+    int end = page * n + n;
+    relasiMLLAddress R = P->first_song;
+    int i;
+        for (i=1; i<start; i++) {
+        R = R->next;
+    }
+
+    for (i=start; i<=end; i++) {
+        displaySongInfo(R->song_pointer, i%n);
+        R = R->next;
+    }
+}
+
+void homePage() {
+    cout << "┌────────────────────────────────────────────┐" << endl;
+    cout << "│                  Home Page                 │" << endl;
+    cout << "├────────────────────────────────────────────┤" << endl;
+    cout << "│  [1]Library  |  [2]Artists  | [3]Playlists │" << endl;
+    cout << "└────────────────────────────────────────────┘" << endl;
+}
+
+void playFromPlaylist(playlistAddress P, int page, int n, int song_number, relasiMLLAddress &current, bool &isPlaying) {
+    //Memainkan lagu yang ada di dalam Playlist
+    //Menggunakan relasiMLLAddress R untuk menunjuk lagu yang sedang dimainkan dan boolean isPlaying untuk menandai status pemutaran lagu
+    int song_position = (page - 1) * n + song_number;
+    current = P->first_song;
+    int i;
+    for (i=1; i<song_position; i++) {
+        current = current->next;
+    }
+    isPlaying = true;
+}
+
+relasiMLLAddress moveToSimilarSongs(userAddress U, songAddress current_song) {
+    string artistName = current_song->info.artist_name;
+    playlistAddress artistPlaylist = U->artists.first;
+    while (artistPlaylist != U->first_playlist && artistPlaylist->info.playlist_name != artistName) {
+        artistPlaylist = artistPlaylist->next;
+    }
+    if (artistPlaylist == U->first_playlist || artistPlaylist->info.playlist_size <= 1) {
+        cout << "Tidak ditemukan lagu lain dari artist yang sama." << endl;
+        return U->first_playlist->first_song; // Tidak ditemukan playlist artist atau hanya ada 1 lagu dari artist tersebut
+    } else {
+        relasiMLLAddress R = artistPlaylist->first_song;
+        while (R != nullptr) {
+            if (R->song_pointer == current_song) {
+                return R;
+            }
+            R = R->next;
+        }
+        cout << "Terdapat error saat memutar lagu tersebut." << endl;
+        return artistPlaylist->first_song; // Kembalikan lagu pertama dari playlist artist sebagai default, seharusnya tidak akan terjadi
+    }
+    
+}
+
+void playFromLibrary(Library L, int page, int n, userAddress U, int song_number, relasiMLLAddress &current, bool &isPlaying) {
+    //Memainkan lagu yang ada di dalam Library
+    int song_position = (page - 1) * n + song_number;
+    songAddress P = L.first;
+    int i;
+    for (i=1; i<song_position; i++) {
+        P = P->next;
+    }
+    isPlaying = true;
+    current = moveToSimilarSongs(U, P);
+}
+
+void stopSong(bool &isPlaying) {
+    //Menghentikan pemutaran lagu dengan mengubah status isPlaying menjadi false
+    isPlaying = false;
+}
+
+void nextSong(relasiMLLAddress &current, bool &isPlaying) {
+    //Memindahkan ke lagu berikutnya dalam playlist
+    if (current->next != nullptr) {
+        current = current->next;
+    } else {
+        cout << "Sudah di lagu terakhir dalam playlist." << endl;
+        stopSong(isPlaying);
+    }
+}
+
+
+void prevSong(relasiMLLAddress &current, bool &isPlaying) {
+    //Memindahkan ke lagu sebelumnya dalam playlist
+    if (current->prev != nullptr) {
+        current = current->prev;
+    } else {
+        cout << "Sudah di lagu pertama dalam playlist." << endl;
+    }
+}
+
+void nowPlays(bool isPlaying, int width) {
+    if (isPlaying) {
+        cout << "┌────────────────────────────────────────────┐" << endl;
+        cout << "│                 Now Playing                │" << endl;
+        cout << "│";
+        centerText("Home Page", width-2);
+        cout << "│" << endl;
+        cout << "├────────────────────────────────────────────┤" << endl;
+        cout << "│    [P]rev    |    [S]top    |    [N]ext    │" << endl;
+        cout << "└────────────────────────────────────────────┘" << endl;
+    }
 }

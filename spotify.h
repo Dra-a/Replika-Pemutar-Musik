@@ -82,7 +82,7 @@ songAddress findSong(Library L, string song_name);
 
 void deleteSongFromLibrary(Library &L, songAddress &P);
 void editSongFromLibrary(Library &L, songAddress &P);
-void displayLibrary(Library L);                             //belum
+void displayLibrary(Library L, int page, int n);                             
 void sortSong(Library &L);                                  //belum
 
 // Function dan Procedure Playlist
@@ -93,7 +93,7 @@ void editPlaylist(userAddress &P, string playlist_name);                        
 void displayPlaylists(userAddress P);                                           //belum
 void displayArtist(Artists P);                                                  //belum
 
-void displaySongsInPlaylist(playlistAddress P);                                 //belum
+void displaySongsInPlaylist(playlistAddress P, int page, int n);                                 //belum
 void addSongToPlaylist(playlistAddress &P, songAddress song);
 void removeSongFromPlaylist(playlistAddress &P, songAddress song);
 
@@ -103,6 +103,20 @@ void addUser(Users &U, userAddress P);
 userAddress findUser(Users U, string user_name);          
 
 // Function dan Procedure Fitur Tambahan
-songAddress findSimilarSong(Library L, songAddress current_song);
+relasiMLLAddress moveToSimilarSongs(userAddress U, songAddress current_song);
 
+// Menu dan keperluan tampilan
+void centerText(const string text, int width);
+void displaySongInfo(songAddress P, int number);
+void homePage();
+void menu();
+int getLibrarySize(Library L);                    
+int getPlaylistSize(playlistAddress P);    
+
+void playFromPlaylist(playlistAddress P, int page, int n, int song_number, relasiMLLAddress &current, bool &isPlaying);
+void playFromLibrary(Library L, int page, int n, userAddress U, int song_number, relasiMLLAddress &current, bool &isPlaying);
+void stopSong(bool &isPlaying);
+void nextSong(relasiMLLAddress &current, bool &isPlaying);
+void prevSong(relasiMLLAddress &current, bool &isPlaying);
+void nowPlays(bool isPlaying, int width);
 #endif // SPOTIFY_H_INCLUDED
