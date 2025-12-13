@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1765663956 source:d:\cood\tubesstd\replika-pemutar-musik\spotify.cpp
+1765664783 source:d:\cood\tubesstd\replika-pemutar-musik\spotify.cpp
 	"spotify.h"
 	<iostream>
 	<string>

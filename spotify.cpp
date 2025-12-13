@@ -118,7 +118,6 @@ void AddSongToArtists(Artists &A, songAddress P) {
         addArtist(A, PL);
 
         addSongToPlaylist(PL, P);
-        PL->info.playlist_size += 1;
     }
 }
 
@@ -250,6 +249,7 @@ void addSongToPlaylist(playlistAddress &P, songAddress song){
     relasiMLLAddress R = allocateRelasi(song);
     if (P->first_song == nullptr){
         P->first_song = R;
+        P->info.playlist_size += 1;
     } else{
         relasiMLLAddress temp = P->first_song;
         while (temp->next != nullptr && temp->song_pointer != song){

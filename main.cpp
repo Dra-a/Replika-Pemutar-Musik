@@ -281,7 +281,7 @@ int main() {
                             cin >> pilihanPlaylist;
                             if (pilihanPlaylist >= "1" && pilihanPlaylist <= "5") {
                                 int playlist_number = stoi(pilihanPlaylist);
-                                playlistAddress selectedPlaylist = getArtistPlaylistFromArtists(A, pagePlaylist, contentPerPage, playlist_number);
+                                playlistAddress selectedPlaylist = getPlaylistFromUser(currentUser, pagePlaylist, contentPerPage, playlist_number);
                                 string pilihanSong = "";
                                 int pageSong = 1;
                                 while (pilihanSong != "H") {
