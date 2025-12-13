@@ -37,6 +37,19 @@ songAddress allocateSong(song_info info){
     return P;
 }
 
+userAddress allocateUser(user_info info){
+    //Menerima user_info yang berisi berbagai informasi dari suatu user
+    //Mengembalikan userAddress sebagai pointer dari userElement untuk user tersebut
+    userAddress P = new userElement;
+    P->next = nullptr;
+    P->info.user_name = info.user_name;
+    P->info.playlist_count = info.playlist_count;
+    P->info.isAdmin = info.isAdmin;
+    P->first_playlist = nullptr;
+
+    return P;
+}
+
 relasiMLLAddress allocateRelasi(songAddress song) {
     relasiMLLAddress P = new relasiMLL;
     P->song_pointer = song;
@@ -162,6 +175,34 @@ void editSongFromLibrary(Library &L, songAddress &P) {
     P->info.times_played = newInfo.times_played;
 }
 
+void removeSongFromPlaylist(playlistAddress &P, songAddress song){
+    //Menghapus lagu dari playlist user menggunakan elemen relasi MLL, kemudian mengurangi jumlah lagu dalam playlistnya dengan 1
+    relasiMLLAddress R = P->first_song;
+    while (R != nullptr && R->song_pointer != song){
+        R = R->next;
+    }
+    if (R != nullptr){
+        //Jika merupakan elemen pertama
+        if (P->first_song == R){
+            P->first_song = R->next;
+            R->next = nullptr;
+            if (P->first_song != nullptr){
+                P->first_song->prev = nullptr;
+            }
+        } else{
+            relasiMLLAddress Q = R->prev;
+            Q->next = R->next;
+            if (R->next != nullptr){
+                R->next->prev = Q;
+            }
+            R->next = nullptr;
+            R->prev = nullptr;
+        }
+        P->info.playlist_size -= 1;
+    }
+}
+
+
 void addUser(Users &U, userAddress P){
     //Menambahkan userElement yang ditunjuk oleh userAddress P ke dalam List Users
     if (U.first == nullptr){
@@ -201,4 +242,32 @@ void addSongToPlaylist(playlistAddress &P, songAddress song){
         R->prev = temp;
     }
     P->info.playlist_size += 1;
+}
+
+void deletePlaylist(userAddress &P, playlistAddress Q) {
+    //Menghapus playlistElement yang ditunjuk oleh playlistAddress Q dari List Playlist milik User yang ditunjuk oleh userAddress P
+    if (P->first_playlist == Q){
+        P->first_playlist = Q->next;
+        Q->next = nullptr;
+    } else{
+        playlistAddress temp = P->first_playlist;
+        while (temp->next != Q){
+            temp = temp->next;
+        }
+        temp->next = Q->next;
+        Q->next = nullptr;
+    }
+}
+
+userAddress findUser(Users U, string user_name){
+    //Menelusuri List Users untuk mencari userElement dengan user_name yang sama
+    //Mengembalikan userAddress dari userElement tersebut, mengembalikan nullptr jika tidak ditemukan
+    userAddress P = U.first;
+    while (P != nullptr){
+        if (P->info.user_name == user_name){
+            return P;
+        }
+        P = P->next;
+    }
+    return nullptr;
 }

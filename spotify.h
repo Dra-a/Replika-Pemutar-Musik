@@ -88,19 +88,19 @@ void sortSong(Library &L);                                  //belum
 // Function dan Procedure Playlist
 playlistAddress allocatePlaylist(playlist_info info);       //belum
 void addPlaylist(userAddress &P, playlistAddress Q);
-void deletePlaylist(userAddress &P, playlistAddress Q);     //belum
+void deletePlaylist(userAddress &P, playlistAddress Q);     
 void editPlaylist(userAddress &P, string playlist_name);                        //belum
 void displayPlaylists(userAddress P);                                           //belum
 void displayArtist(Artists P);                                                  //belum
 
 void displaySongsInPlaylist(playlistAddress P);                                 //belum
 void addSongToPlaylist(playlistAddress &P, songAddress song);
-void removeSongFromPlaylist(playlistAddress &P, songAddress song);              //belum
+void removeSongFromPlaylist(playlistAddress &P, songAddress song);
 
 // Function dan Procedure User
-userAddress allocateUser(user_info info);                       //belum
+userAddress allocateUser(user_info info);
 void addUser(Users &U, userAddress P);
-userAddress findUser(Users U, int user_name);                   //belum
+userAddress findUser(Users U, string user_name);          
 
 // Function dan Procedure Fitur Tambahan
 songAddress findSimilarSong(Library L, songAddress current_song);
