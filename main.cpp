@@ -1,6 +1,13 @@
 #include "spotify.h"
 #include <iostream>
+#include <string>
+#include <iomanip>
+#include <windows.h>
 using namespace std;
+
+#ifdef _WIN32
+SetConsoleOutputCP(CP_UTF8);
+#endif
 
 int main() {
     Library L;
