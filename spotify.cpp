@@ -38,7 +38,6 @@ songAddress allocateSong(song_info info){
     P->info.song_name = info.song_name;
     P->info.artist_name = info.artist_name;
     P->info.duration = info.duration;
-    P->info.times_played = info.times_played;
 
     return P;
 }
@@ -153,7 +152,6 @@ void editSongFromLibrary(Library &L, songAddress &P) {
     newInfo.song_name = P->info.song_name;
     newInfo.artist_name = P->info.artist_name;
     newInfo.duration = P->info.duration;
-    newInfo.times_played = P->info.times_played;
 
     cout << "Informasi mana yang ingin diubah?" << endl;
     cout << "1. Nama Lagu" << endl;
@@ -166,31 +164,21 @@ void editSongFromLibrary(Library &L, songAddress &P) {
     
     if (pilihan == 1) {
         cout << "Masukkan nama lagu yang baru" << endl;
-        string nama;
-        cin >> nama;
-        newInfo.song_name = nama;
+        cin >> newInfo.song_name;
 
     } else if (pilihan == 2) {
         cout << "Masukkan nama artist yang baru" << endl;
-        string nama;
-        cin >> nama;
-        newInfo.artist_name = nama;
+        cin >> newInfo.artist_name;
     } else if (pilihan == 3) {
         cout << "Masukkan lama durasi yang baru" << endl;
         waktu waktu;
         cin >> waktu.menit >> waktu.detik;
         newInfo.duration = waktu;
-    } else if (pilihan == 4) {
-        cout << "Masukkan jumlah play yang baru" << endl;
-        int jumlah;
-        cin >> jumlah;
-        newInfo.times_played = jumlah;
     }
 
     P->info.song_name = newInfo.song_name;
     P->info.artist_name = newInfo.artist_name;
     P->info.duration = newInfo.duration;
-    P->info.times_played = newInfo.times_played;
 }
 
 void removeSongFromPlaylist(playlistAddress &P, songAddress song){
@@ -381,21 +369,74 @@ void displayLibrary(Library L, int page, int n) {
     cout << "└────────────────────────────────────────────┘" << endl;
 }
 
+songAddress getSongFromLibrary(Library L, int page, int n, int song_number) {
+    //Mengambil songAddress dari lagu yang ada di dalam Library berdasarkan nomor lagu pada halaman tertentu
+    int song_position = (page - 1) * n + song_number;
+    songAddress P = L.first;
+    int i;
+    for (i=1; i<song_position; i++) {
+        P = P->next;
+    }
+    return P;
+}
+
+relasiMLLAddress getSongFromPlaylist(playlistAddress P, int page, int n, int song_number) {
+    //Mengambil relasiMLLAddress dari lagu yang ada di dalam Playlist berdasarkan nomor lagu pada halaman tertentu
+    int song_position = (page - 1) * n + song_number;
+    relasiMLLAddress R = P->first_song;
+    int i;
+    for (i=1; i<song_position; i++) {
+        R = R->next;
+    }
+    return R;
+}
+
+playlistAddress getPlaylistFromUser(userAddress U, int page, int n, int playlist_number) {
+    //Mengambil playlistAddress dari playlist yang dimiliki oleh User berdasarkan nomor playlist pada halaman tertentu
+    int playlist_position = (page - 1) * n + playlist_number;
+    playlistAddress P = U->first_playlist;
+    int i;
+    for (i=1; i<playlist_position; i++) {
+        P = P->next;
+    }
+    return P;
+}
+
+playlistAddress getArtistPlaylistFromArtists(Artists A, int page, int n, int playlist_number) {
+    //Mengambil playlistAddress dari playlist artist yang ada di dalam Artists berdasarkan nomor playlist pada halaman tertentu
+    int playlist_position = (page - 1) * n + playlist_number;
+    playlistAddress P = A.first;
+    int i;
+    for (i=1; i<playlist_position; i++) {
+        P = P->next;
+    }
+    return P;
+}
+
 void displaySongsInPlaylist(playlistAddress P, int page, int n) {
     //Menampilkan seluruh lagu yang ada di dalam Playlist
     page = page - 1; //Mengubah halaman agar sesuai dengan index (dimulai dari 0)
     int start = page * n + 1;
     int end = page * n + n;
+    int totalPages = (P->info.playlist_size + n - 1) / n;
     relasiMLLAddress R = P->first_song;
     int i;
         for (i=1; i<start; i++) {
         R = R->next;
     }
 
+    cout << "┌────────────────────────────────────────────┐" << endl;
+    cout << "│ [H]ome │";
+    centerText(P->info.playlist_name, 35);
+    cout << "│" << endl;
+    cout << "├────────────────────────────────────────────┤" << endl;
     for (i=start; i<=end; i++) {
         displaySongInfo(R->song_pointer, i%n);
         R = R->next;
     }
+    cout << "│                                            │" << endl;
+    cout << "│ [P]rev     Showing page " << page << " of " << totalPages << "     [N]ext  │" << endl;
+    cout << "└────────────────────────────────────────────┘" << endl;
 }
 
 void homePage(userAddress U, int width) {
@@ -415,24 +456,19 @@ void homePage(userAddress U, int width) {
 void playFromPlaylist(playlistAddress P, int page, int n, int song_number, relasiMLLAddress &current, bool &isPlaying) {
     //Memainkan lagu yang ada di dalam Playlist
     //Menggunakan relasiMLLAddress R untuk menunjuk lagu yang sedang dimainkan dan boolean isPlaying untuk menandai status pemutaran lagu
-    int song_position = (page - 1) * n + song_number;
-    current = P->first_song;
-    int i;
-    for (i=1; i<song_position; i++) {
-        current = current->next;
-    }
+    current = getSongFromPlaylist(P, page, n, song_number);
     isPlaying = true;
 }
 
-relasiMLLAddress moveToSimilarSongs(userAddress U, songAddress current_song) {
+relasiMLLAddress moveToSimilarSongs(Artists A, songAddress current_song) {
     string artistName = current_song->info.artist_name;
-    playlistAddress artistPlaylist = U->artists.first;
-    while (artistPlaylist != U->first_playlist && artistPlaylist->info.playlist_name != artistName) {
+    playlistAddress artistPlaylist = A.first;
+    while (artistPlaylist != nullptr && artistPlaylist->info.playlist_name != artistName) {
         artistPlaylist = artistPlaylist->next;
     }
-    if (artistPlaylist == U->first_playlist || artistPlaylist->info.playlist_size <= 1) {
+    if (artistPlaylist == nullptr || artistPlaylist->info.playlist_size <= 1) {
         cout << "Tidak ditemukan lagu lain dari artist yang sama." << endl;
-        return U->first_playlist->first_song; // Tidak ditemukan playlist artist atau hanya ada 1 lagu dari artist tersebut
+        return A.first->first_song; // Tidak ditemukan playlist artist atau hanya ada 1 lagu dari artist tersebut
     } else {
         relasiMLLAddress R = artistPlaylist->first_song;
         while (R != nullptr) {
@@ -447,16 +483,11 @@ relasiMLLAddress moveToSimilarSongs(userAddress U, songAddress current_song) {
     
 }
 
-void playFromLibrary(Library L, int page, int n, userAddress U, int song_number, relasiMLLAddress &current, bool &isPlaying) {
+void playFromLibrary(Library L, int page, int n, Artists A, int song_number, relasiMLLAddress &current, bool &isPlaying) {
     //Memainkan lagu yang ada di dalam Library
-    int song_position = (page - 1) * n + song_number;
-    songAddress P = L.first;
-    int i;
-    for (i=1; i<song_position; i++) {
-        P = P->next;
-    }
+    songAddress P = getSongFromLibrary(L, page, n, song_number);
     isPlaying = true;
-    current = moveToSimilarSongs(U, P);
+    current = moveToSimilarSongs(A, P);
 }
 
 void stopSong(bool &isPlaying) {
@@ -535,15 +566,15 @@ void displayArtist(Artists A, int page, int n) {
     cout << "└────────────────────────────────────────────┘" << endl;
 }
 
-void displayPlaylists(userAddress P, int page, int n) {
+void displayPlaylists(userAddress pU, int page, int n) {
     //Menampilkan seluruh playlist yang ada di dalam Playlist milik User
     page = page - 1; //Mengubah halaman agar sesuai dengan index (dimulai dari 0)
     int start = page * n + 1;
     int end = page * n + n;
-    int size = getPlaylistCount(P);
+    int size = getPlaylistCount(pU);
     int totalPages = (size + n - 1) / n;
 
-    playlistAddress P = A.first;
+    playlistAddress P = pU->first_playlist;
     int i;
     for (i=1; i<start; i++) {
         P = P->next;

@@ -11,7 +11,6 @@ struct waktu {
 struct song_info {
     string song_name, artist_name;
     waktu duration;
-    int times_played;
 };
 
 struct playlist_info {
@@ -45,6 +44,13 @@ struct relasiMLL {
     relasiMLLAddress next, prev;
 };
 
+typedef struct userElement *userAddress;
+struct userElement {
+    user_info info;
+    userAddress next;
+    playlistAddress first_playlist;
+};
+
 // Tipe List
 struct Library {
     songAddress first, last;
@@ -57,17 +63,6 @@ struct Users {
 
 struct Artists {
     playlistAddress first;
-};
-
-// Elemen User dapat mengakses library dan artists
-
-typedef struct userElement *userAddress;
-struct userElement {
-    user_info info;
-    userAddress next;
-    playlistAddress first_playlist;
-    Library library;
-    Artists artists;
 };
 
 void createLibrary(Library &L);
@@ -83,14 +78,14 @@ songAddress findSong(Library L, string song_name);
 void deleteSongFromLibrary(Library &L, songAddress &P);
 void editSongFromLibrary(Library &L, songAddress &P);
 void displayLibrary(Library L, int page, int n);                             
-void sortSong(Library &L);                                  //belum
+//void sortSong(Library &L);                                  //belum
 
 // Function dan Procedure Playlist
 playlistAddress allocatePlaylist(playlist_info info);       
 void addPlaylist(userAddress &P, playlistAddress Q);
 void deletePlaylist(userAddress &P, playlistAddress Q);     
-void editPlaylist(userAddress &P, string playlist_name);                        //belum
-void displayPlaylists(userAddress P, int page, int n);                                           
+//void editPlaylist(userAddress &P, string playlist_name);                        //belum
+void displayPlaylists(userAddress U, int page, int n);                                           
 void displayArtist(Artists P, int page, int n);                                                 
 
 void displaySongsInPlaylist(playlistAddress P, int page, int n);                                
@@ -103,7 +98,7 @@ void addUser(Users &U, userAddress P);
 userAddress findUser(Users U, string user_name);          
 
 // Function dan Procedure Fitur Tambahan
-relasiMLLAddress moveToSimilarSongs(userAddress U, songAddress current_song);
+relasiMLLAddress moveToSimilarSongs(Artists A, songAddress current_song);
 
 // Menu dan keperluan tampilan
 void centerText(const string text, int width);
@@ -113,9 +108,13 @@ int getLibrarySize(Library L);
 int getPlaylistSize(playlistAddress P);    
 int getArtistsCount(Artists A);
 int getPlaylistCount(userAddress U);
+songAddress getSongFromLibrary(Library L, int page, int n, int song_number);
+relasiMLLAddress getSongFromPlaylist(playlistAddress P, int page, int n, int song_number);
+playlistAddress getPlaylistFromUser(userAddress U, int page, int n, int playlist_number);
+playlistAddress getArtistPlaylistFromArtists(Artists A, int page, int n, int playlist_number);
 
 void playFromPlaylist(playlistAddress P, int page, int n, int song_number, relasiMLLAddress &current, bool &isPlaying);
-void playFromLibrary(Library L, int page, int n, userAddress U, int song_number, relasiMLLAddress &current, bool &isPlaying);
+void playFromLibrary(Library L, int page, int n, Artists A, int song_number, relasiMLLAddress &current, bool &isPlaying);
 void stopSong(bool &isPlaying);
 void nextSong(relasiMLLAddress &current, bool &isPlaying);
 void prevSong(relasiMLLAddress &current, bool &isPlaying);

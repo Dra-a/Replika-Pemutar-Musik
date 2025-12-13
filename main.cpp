@@ -49,11 +49,89 @@ int main() {
         }
 
         while (currentUser != nullptr) {
+            int page = 1;
+            int contentPerPage = 5;
+
             if (currentUser->info.isAdmin) {
-                // Admin functionalities can be added here
+                string pilihanAdmin = "";
+                while (currentUser != nullptr) {
+                    cout << "Admin Menu: [1] Song List  [2] Add Song  [L]ogout" << endl;
+                    cin >> pilihanAdmin;
+
+                    if (pilihanAdmin == "L") {
+                        currentUser = nullptr;
+                    } else if (pilihanAdmin == "1") {
+                        string pilihanLibrary = "";
+                        while (pilihanLibrary != "H") {
+                            displayLibrary(L, page, contentPerPage);
+                            cin >> pilihanLibrary;
+                            songAddress selectedSong;
+                            if (pilihanLibrary >= "1" && pilihanLibrary <= "5") {
+                                int song_number = stoi(pilihanLibrary);
+                                selectedSong = getSongFromLibrary(L, page, contentPerPage, song_number);
+                                cout << "Pilih aksi: [1] Edit Song  [2] Delete Song  [B]ack" << endl;
+                                string aksiSong;
+                                cin >> aksiSong;
+                                if (aksiSong == "1") {
+                                    editSongFromLibrary(L, selectedSong);
+                                } else if (aksiSong == "2") {
+                                    userAddress pU = U.first;
+                                    while (pU != nullptr) {
+                                        playlistAddress pPL = pU->first_playlist;
+                                        while (pPL != nullptr) {
+                                            relasiMLLAddress R = pPL->first_song;
+                                            while (R != nullptr) {
+                                                if (R->song_pointer == selectedSong) {
+                                                    removeSongFromPlaylist(pPL, selectedSong);
+                                                }
+                                                R = R->next;
+                                            }
+                                            pPL = pPL->next;
+                                        }
+                                        pU = pU->next;
+                                    }
+                                    deleteSongFromLibrary(L, selectedSong);
+                                }
+                            } else if (pilihanLibrary == "P") {
+                                if (page > 1) {
+                                    page--;
+                                }
+                            } else if (pilihanLibrary == "N") {
+                                int totalSongs = getLibrarySize(L);
+                                int totalPages = (totalSongs + contentPerPage - 1) / contentPerPage;
+                                if (page < totalPages) {
+                                    page++;
+                                }
+                            } else if (pilihanLibrary == "F") {
+                                string songName;
+                                cout << "Masukkan nama lagu yang dicari: ";
+                                cin >> songName;
+                                songAddress foundSong = findSong(L, songName);
+                                if (foundSong != nullptr) {
+                                    cout << "Lagu ditemukan: " << foundSong->info.song_name << " oleh " << foundSong->info.artist_name << endl;
+                                } else {
+                                    cout << "Lagu tidak ditemukan dalam library." << endl;
+                                }
+                            }
+                        }
+                    } else if (pilihanAdmin == "2") {
+                        song_info info;
+                        cout << "Masukkan nama lagu: ";
+                        cin >> info.song_name;
+                        cout << "Masukkan nama artist: ";
+                        cin >> info.artist_name;
+                        cout << "Masukkan durasi (menit): ";
+                        cin >> info.duration.menit;
+                        cout << "Masukkan durasi (detik): ";
+                        cin >> info.duration.detik;
+                        songAddress P = allocateSong(info);
+                        addSongToLibrary(L, P);
+                        AddSongToArtists(A, P);
+                    }
+                }
             } else {
-                int page = 1;
-                int contentPerPage = 5;
+                relasiMLLAddress currentSong = nullptr;
+                bool isPlaying = false;
                 homePage(currentUser, box_width);
 
                 string pilihanHomePage;
@@ -61,11 +139,143 @@ int main() {
                 if (pilihanHomePage == "L") {
                     currentUser = nullptr;
                 } else if (pilihanHomePage == "1") {
-                    displayLibrary(L, page, contentPerPage);
+                    string pilihanLibrary = "";
+                    while (pilihanLibrary != "H") {
+                        displayLibrary(L, page, contentPerPage);
+                        cin >> pilihanLibrary;
+                        if (pilihanLibrary >= "1" && pilihanLibrary <= "5") {
+                            int song_number = stoi(pilihanLibrary);
+                            songAddress selectedSong = getSongFromLibrary(L, page, contentPerPage, song_number);
+                            cout << "Pilih aksi: [1] Play Song  [2] Add to Playlist  [B]ack" << endl;
+                            string aksiSong;
+                            cin >> aksiSong;
+                            if (aksiSong == "1") {
+                                playFromLibrary(L, page, contentPerPage, A, song_number, currentSong, isPlaying);
+                            } else if (aksiSong == "2") {
+                                int pagePL = 1;
+                                string pilihanPlayList = "";
+                                while (pilihanPlayList != "H") {
+                                    displayPlaylists(currentUser, pagePL, contentPerPage);
+                                    cin >> pilihanPlayList;
+                                    if (pilihanPlayList >= "1" && pilihanPlayList <= "5") {
+                                        int playlist_number = stoi(pilihanPlayList);
+                                        playlistAddress selectedPlaylist = getPlaylistFromUser(currentUser, pagePL, contentPerPage, playlist_number);
+                                        addSongToPlaylist(selectedPlaylist, selectedSong);
+                                    } else if (pilihanPlayList == "P") {
+                                        if (pagePL > 1) {
+                                            pagePL--;
+                                        }
+                                    } else if (pilihanPlayList == "N") {
+                                        int totalPlaylists = getPlaylistCount(currentUser);
+                                        int totalPages = (totalPlaylists + contentPerPage - 1) / contentPerPage;
+                                        if (pagePL < totalPages) {
+                                            pagePL++;
+                                        }
+                                    }
+                                }
+                            }
+                        } else if (pilihanLibrary == "P") {
+                            if (page > 1) {
+                                page--;
+                            }
+                        } else if (pilihanLibrary == "N") {
+                            int totalSongs = getLibrarySize(L);
+                            int totalPages = (totalSongs + contentPerPage - 1) / contentPerPage;
+                            if (page < totalPages) {
+                                page++;
+                            }
+                        } else if (pilihanLibrary == "F") {
+                            string songName;
+                            cout << "Masukkan nama lagu yang dicari: ";
+                            cin >> songName;
+                            songAddress foundSong = findSong(L, songName);
+                            if (foundSong != nullptr) {
+                                cout << "Lagu ditemukan: " << foundSong->info.song_name << " oleh " << foundSong->info.artist_name << endl;
+                            } else {
+                                cout << "Lagu tidak ditemukan dalam library." << endl;
+                            }
+                        }
+                    }
                 } else if (pilihanHomePage == "2") {
-                    displayArtist(A, page, contentPerPage);
+                    int pageArtist = 1;
+                    string pilihanArtist = "";
+                    while (pilihanArtist != "H") {
+                        displayArtist(A, pageArtist, contentPerPage);
+                        cin >> pilihanArtist;
+                        if (pilihanArtist >= "1" && pilihanArtist <= "5") {
+                            int artist_number = stoi(pilihanArtist);
+                            playlistAddress selectedPlaylist = getArtistPlaylistFromArtists(A, pageArtist, contentPerPage, artist_number);
+                            string pilihanSong = "";
+                            int pageSong = 1;
+                            while (pilihanSong != "H") {
+                                displaySongsInPlaylist(selectedPlaylist, pageSong, contentPerPage); 
+                                cin >> pilihanSong;
+                                if (pilihanSong >= "1" && pilihanSong <= "5") {
+                                    int song_num = stoi(pilihanSong);
+                                    playFromPlaylist(selectedPlaylist, pageSong, contentPerPage, song_num, currentSong, isPlaying);
+                                } else if (pilihanSong == "P") {
+                                    if (pageSong > 1) {
+                                        pageSong--;
+                                    }
+                                } else if (pilihanSong == "N") {
+                                    int totalPages = (selectedPlaylist->info.playlist_size + contentPerPage - 1) / contentPerPage;
+                                    if (pageSong < totalPages) {
+                                        pageSong++;
+                                    }
+                                }
+                            }
+                        } else if (pilihanArtist == "P") {
+                            if (pageArtist > 1) {
+                                pageArtist--;
+                            }
+                        } else if (pilihanArtist == "N") {
+                            int totalArtists = getArtistsCount(A);
+                            int totalPages = (totalArtists + contentPerPage - 1) / contentPerPage;
+                            if (pageArtist < totalPages) {
+                                pageArtist++;
+                            }
+                        }
+                    }
                 } else if (pilihanHomePage == "3") {
-                    displayPlaylists(currentUser, page, contentPerPage);
+                    int pagePlaylist = 1;
+                    string pilihanPlaylist = "";
+                    while (pilihanPlaylist != "H") {
+                        displayPlaylists(currentUser, pagePlaylist, contentPerPage);
+                        cin >> pilihanPlaylist;
+                        if (pilihanPlaylist >= "1" && pilihanPlaylist <= "5") {
+                            int playlist_number = stoi(pilihanPlaylist);
+                            playlistAddress selectedPlaylist = getArtistPlaylistFromArtists(A, pagePlaylist, contentPerPage, playlist_number);
+                            string pilihanSong = "";
+                            int pageSong = 1;
+                            while (pilihanSong != "H") {
+                                displaySongsInPlaylist(selectedPlaylist, pageSong, contentPerPage); 
+                                cin >> pilihanSong;
+                                if (pilihanSong >= "1" && pilihanSong <= "5") {
+                                    int song_num = stoi(pilihanSong);
+                                    playFromPlaylist(selectedPlaylist, pageSong, contentPerPage, song_num, currentSong, isPlaying);
+                                } else if (pilihanSong == "P") {
+                                    if (pageSong > 1) {
+                                        pageSong--;
+                                    }
+                                } else if (pilihanSong == "N") {
+                                    int totalPages = (selectedPlaylist->info.playlist_size + contentPerPage - 1) / contentPerPage;
+                                    if (pageSong < totalPages) {
+                                        pageSong++;
+                                    }
+                                }
+                            }
+                        } else if (pilihanPlaylist == "P") {
+                            if (pagePlaylist > 1) {
+                                pagePlaylist--;
+                            }
+                        } else if (pilihanPlaylist == "N") {
+                            int totalArtists = getArtistsCount(A);
+                            int totalPages = (totalArtists + contentPerPage - 1) / contentPerPage;
+                            if (pagePlaylist < totalPages) {
+                                pagePlaylist++;
+                            }
+                        }
+                    }
                 }
             }
         }
