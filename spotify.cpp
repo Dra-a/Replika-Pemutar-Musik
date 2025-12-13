@@ -65,6 +65,18 @@ relasiMLLAddress allocateRelasi(songAddress song) {
     return P;
 }
 
+playlistAddress allocatePlaylist(playlist_info info){
+    //Menerima playlist_info yang berisi berbagai informasi dari suatu playlist
+    //Mengembalikan playlistAddress sebagai pointer dari playlistElement untuk playlist tersebut
+    playlistAddress P = new playlistElement;
+    P->next = nullptr;
+    P->first_song = nullptr;
+    P->info.playlist_name = info.playlist_name;
+    P->info.playlist_size = info.playlist_size;
+
+    return P;
+}
+
 void addSongToLibrary(Library &L, songAddress P){
     //Menambahkan songElement yang ditunjuk oleh P ke dalam List Library
     if (L.first == nullptr && L.last == nullptr){
@@ -321,6 +333,28 @@ int getPlaylistSize(playlistAddress P) {
     return size;
 }
 
+int getArtistsCount(Artists A) {
+    //Menghitung jumlah playlist artist yang ada di dalam Artists
+    int size = 0;
+    playlistAddress P = A.first;
+    while (P != nullptr) {
+        size++;
+        P = P->next;
+    }
+    return size;
+}
+
+int getPlaylistCount(userAddress U) {
+    //Menghitung jumlah playlist yang dimiliki oleh User
+    int size = 0;
+    playlistAddress P = U->first_playlist;
+    while (P != nullptr) {
+        size++;
+        P = P->next;
+    }
+    return size;
+}
+
 void displayLibrary(Library L, int page, int n) {
     //Menampilkan seluruh lagu yang ada di dalam Library
     page = page - 1; //Mengubah halaman agar sesuai dengan index (dimulai dari 0)
@@ -364,9 +398,15 @@ void displaySongsInPlaylist(playlistAddress P, int page, int n) {
     }
 }
 
-void homePage() {
+void homePage(userAddress U, int width) {
+    //Menampilkan halaman utama setelah user berhasil login
     cout << "┌────────────────────────────────────────────┐" << endl;
-    cout << "│                  Home Page                 │" << endl;
+    cout << "│";
+    centerText("Welcome, " + U->info.user_name, U->info.user_name.length() + 2);
+    cout << "│" << endl;
+    cout << "└────────────────────────────────────────────┘" << endl;
+    cout << "┌────────────────────────────────────────────┐" << endl;
+    cout << "│ [L]og out │            Home Page           │" << endl;
     cout << "├────────────────────────────────────────────┤" << endl;
     cout << "│  [1]Library  |  [2]Artists  | [3]Playlists │" << endl;
     cout << "└────────────────────────────────────────────┘" << endl;
@@ -455,4 +495,68 @@ void nowPlays(bool isPlaying, int width) {
         cout << "│    [P]rev    |    [S]top    |    [N]ext    │" << endl;
         cout << "└────────────────────────────────────────────┘" << endl;
     }
+}
+
+void displayPlayListInfo(playlistAddress P, int number) {
+    //Menampilkan informasi dari suatu playlist dalam format yang rapi
+    int maxTitleLength = 38;
+
+    cout << "│ [" << number << "] ";
+    cout << setfill(' ') << setw(maxTitleLength) << left << P->info.playlist_name << " │\n";
+    cout << "│";
+    cout << "│     " << setfill('0') << setw(2) << left << P->info.playlist_size << " Songs";
+    cout << setfill(' ') << setw(12) << "│" << endl;
+    cout << "│ · · · · · · · · · · · · · · · · · · · · ·  │" << endl;
+}
+
+void displayArtist(Artists A, int page, int n) {
+    //Menampilkan seluruh playlist artist yang ada di dalam Artists
+    page = page - 1; //Mengubah halaman agar sesuai dengan index (dimulai dari 0)
+    int start = page * n + 1;
+    int end = page * n + n;
+    int size = getArtistsCount(A);
+    int totalPages = (size + n - 1) / n;
+
+    playlistAddress P = A.first;
+    int i;
+    for (i=1; i<start; i++) {
+        P = P->next;
+    }
+
+    cout << "┌────────────────────────────────────────────┐" << endl;
+    cout << "│ [H]ome │              Artists              │" << endl;
+    cout << "├────────────────────────────────────────────┤" << endl;
+    for (i=start; i<=end; i++) {
+        displayPlayListInfo(P, i%n);
+        P = P->next;
+    }
+    cout << "│                                            │" << endl;
+    cout << "│ [P]rev     Showing page " << page << " of " << totalPages << "     [N]ext  │" << endl;
+    cout << "└────────────────────────────────────────────┘" << endl;
+}
+
+void displayPlaylists(userAddress P, int page, int n) {
+    //Menampilkan seluruh playlist yang ada di dalam Playlist milik User
+    page = page - 1; //Mengubah halaman agar sesuai dengan index (dimulai dari 0)
+    int start = page * n + 1;
+    int end = page * n + n;
+    int size = getPlaylistCount(P);
+    int totalPages = (size + n - 1) / n;
+
+    playlistAddress P = A.first;
+    int i;
+    for (i=1; i<start; i++) {
+        P = P->next;
+    }
+
+    cout << "┌────────────────────────────────────────────┐" << endl;
+    cout << "│ [H]ome │           Your Playlists          │" << endl;
+    cout << "├────────────────────────────────────────────┤" << endl;
+    for (i=start; i<=end; i++) {
+        displayPlayListInfo(P, i%n);
+        P = P->next;
+    }
+    cout << "│                                            │" << endl;
+    cout << "│ [P]rev     Showing page " << page << " of " << totalPages << "     [N]ext  │" << endl;
+    cout << "└────────────────────────────────────────────┘" << endl;
 }

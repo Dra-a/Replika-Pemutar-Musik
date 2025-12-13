@@ -86,14 +86,14 @@ void displayLibrary(Library L, int page, int n);
 void sortSong(Library &L);                                  //belum
 
 // Function dan Procedure Playlist
-playlistAddress allocatePlaylist(playlist_info info);       //belum
+playlistAddress allocatePlaylist(playlist_info info);       
 void addPlaylist(userAddress &P, playlistAddress Q);
 void deletePlaylist(userAddress &P, playlistAddress Q);     
 void editPlaylist(userAddress &P, string playlist_name);                        //belum
-void displayPlaylists(userAddress P);                                           //belum
-void displayArtist(Artists P);                                                  //belum
+void displayPlaylists(userAddress P, int page, int n);                                           
+void displayArtist(Artists P, int page, int n);                                                 
 
-void displaySongsInPlaylist(playlistAddress P, int page, int n);                                 //belum
+void displaySongsInPlaylist(playlistAddress P, int page, int n);                                
 void addSongToPlaylist(playlistAddress &P, songAddress song);
 void removeSongFromPlaylist(playlistAddress &P, songAddress song);
 
@@ -108,10 +108,11 @@ relasiMLLAddress moveToSimilarSongs(userAddress U, songAddress current_song);
 // Menu dan keperluan tampilan
 void centerText(const string text, int width);
 void displaySongInfo(songAddress P, int number);
-void homePage();
-void menu();
+void homePage(userAddress U, int width);
 int getLibrarySize(Library L);                    
 int getPlaylistSize(playlistAddress P);    
+int getArtistsCount(Artists A);
+int getPlaylistCount(userAddress U);
 
 void playFromPlaylist(playlistAddress P, int page, int n, int song_number, relasiMLLAddress &current, bool &isPlaying);
 void playFromLibrary(Library L, int page, int n, userAddress U, int song_number, relasiMLLAddress &current, bool &isPlaying);
