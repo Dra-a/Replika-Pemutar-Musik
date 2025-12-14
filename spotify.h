@@ -91,11 +91,11 @@ playlistAddress allocatePlaylist(playlist_info info);
 void addPlaylist(userAddress &P, playlistAddress Q);
 void addArtist(Artists &A, playlistAddress P);
 void deletePlaylist(userAddress &P, playlistAddress Q);               
-void editPlaylist(userAddress &P, string playlist_name);             // #belum implementasi        
+void editPlaylist(userAddress &U, playlistAddress &P, int contentPerPage, bool &isPlaying);                   
 void displayPlaylists(userAddress U, int page, int n);
 void displayArtist(Artists P, int page, int n);
 
-void displaySongsInPlaylist(playlistAddress P, int page, int n);
+void displaySongsInPlaylist(playlistAddress P, int page, int n, bool showEdit);
 void addSongToPlaylist(playlistAddress &P, songAddress song);
 void removeSongFromPlaylist(playlistAddress &P, songAddress song);                
 void sortSongPlaylist(playlistAddress &P);                              // #belum implementasi
@@ -125,12 +125,13 @@ void prev_page(int &page);
 void next_page(int &page, int totalItems, int itemsPerPage);
 void adminActionHandler(string input, Library &L, Users &U, songAddress &selectedSong);
 void adminMenuHandler(string input, Library &L, userAddress &currentUser, Artists &A, Users &U, int contentPerPage);
-void userActionHandler(string input, Library L, Artists &A, userAddress currentUser, int page, int contentPerPage, int song_number, relasiMLLAddress &currentSong, bool &isPlaying, songAddress selectedSong);
-void userPickSong(string pilihanLibrary, Library L, int page, int contentPerPage, int &song_number, songAddress &selectedSong);
+void userActionHandlerLibrary(string input, Library L, Artists &A, userAddress currentUser, int page, int contentPerPage, int song_number, relasiMLLAddress &currentSong, bool &isPlaying, songAddress selectedSong);
+void userPickSongLibrary(string pilihanLibrary, Library L, int page, int contentPerPage, int &song_number, songAddress &selectedSong);
+void userPickSongPlaylist(string input, playlistAddress selectedPlaylist, int contentPerPage, int &song_number, relasiMLLAddress &selectedSong);
 void userHomePageHandler(string input, userAddress &currentUser, relasiMLLAddress &currentSong, bool &isPlaying, Library &L, Artists &A, int contentPerPage, int box_width);
 void nowPlaysHandler(string input, relasiMLLAddress &currentSong, bool &isPlaying);
-void playFromPlaylist(playlistAddress P, int page, int n, int song_number, relasiMLLAddress &current, bool &isPlaying);
-void playFromLibrary(Library L, int page, int n, Artists A, int song_number, relasiMLLAddress &current, bool &isPlaying);
+void playFromPlaylist(relasiMLLAddress &currentSong, relasiMLLAddress selectedSong, bool &isPlaying);
+void playFromLibrary(Artists A, songAddress selectedSong, relasiMLLAddress &current, bool &isPlaying);
 void stopSong(bool &isPlaying);
 void nextSong(relasiMLLAddress &current, bool &isPlaying);
 void prevSong(relasiMLLAddress &current, bool &isPlaying);
