@@ -68,6 +68,9 @@ struct Artists {
     playlistAddress first;
 };
 
+void clearScreen();
+void inputMessage();
+
 void createLibrary(Library &L);
 void createArtists(Artists &A);
 void createUsers(Users &U);
@@ -117,6 +120,15 @@ relasiMLLAddress getSongFromPlaylist(playlistAddress P, int page, int n, int son
 playlistAddress getPlaylistFromUser(userAddress U, int page, int n, int playlist_number);
 playlistAddress getArtistPlaylistFromArtists(Artists A, int page, int n, int playlist_number);
 
+void prev_page(int &page);
+void next_page(int &page, int totalItems, int itemsPerPage);
+void adminActionHandler(string input, Library &L, Users &U, songAddress &selectedSong);
+void adminMenuHandler(string input, Library &L, userAddress &currentUser, Artists &A, Users &U, int contentPerPage);
+void userActionHandler(string input, Library L, Artists &A, userAddress currentUser, int page, int contentPerPage, int song_number, relasiMLLAddress &currentSong, bool &isPlaying, songAddress selectedSong);
+void userPickSong(string pilihanLibrary, Library L, int page, int contentPerPage);
+void userSongMenuHandler(string input, Library L, int page, int contentPerPage, Artists A, userAddress currentUser, int song_number, relasiMLLAddress &currentSong, bool &isPlaying, songAddress selectedSong);
+void userHomePageHandler(string input, userAddress &currentUser, relasiMLLAddress &currentSong, bool &isPlaying, Library &L, Artists &A, int contentPerPage, int box_width);
+void nowPlaysHandler(string input, relasiMLLAddress &currentSong, bool &isPlaying);
 void playFromPlaylist(playlistAddress P, int page, int n, int song_number, relasiMLLAddress &current, bool &isPlaying);
 void playFromLibrary(Library L, int page, int n, Artists A, int song_number, relasiMLLAddress &current, bool &isPlaying);
 void stopSong(bool &isPlaying);

@@ -5,6 +5,19 @@
 
 using namespace std;
 
+void clearScreen() {
+    // \033[2J = Clear seluruh layar
+    // \033[1;1H = Pindahkan kursor ke pojok kiri atas
+    cout << "\033[2J\033[1;1H";
+}
+
+void inputMessage() {
+    cout << "┌────────────────────────────────────────────┐" << endl;
+    cout << "│ Ketik karakter di dalam [ ] untuk memilih. │" << endl;
+    cout << "└────────────────────────────────────────────┘" << endl;
+    cout << "» ";
+}
+
 void createLibrary(Library &L){
     //Membuat List Library yang memiliki pointer first dan last
     //untuk menyimpan seluruh lagu kedalam satu tempat yang mudah di akses
@@ -154,6 +167,8 @@ void deleteSongFromLibrary(Library &L, songAddress &P) {
             L.last = Q;
         }
     }
+    clearScreen();
+    cout << "Lagu " << P->info.song_name << " berhasil dihapus dari library!" << endl;
 }
 
 void editSongFromLibrary(Library &L, songAddress &P) {
@@ -163,32 +178,51 @@ void editSongFromLibrary(Library &L, songAddress &P) {
     newInfo.artist_name = P->info.artist_name;
     newInfo.duration = P->info.duration;
 
-    cout << "Informasi mana yang ingin diubah?" << endl;
-    cout << "1. Nama Lagu" << endl;
-    cout << "2. Nama Artist" << endl;
-    cout << "3. Lama Durasi" << endl;
-    cout << "4. Jumlah Play" << endl;
-    cout << "Esc" << endl;
-    int pilihan;
+    cout << "┌────────────────────────────────────────────┐" << endl;
+    cout << "│ Info lagu mana yang ingin diubah?          │ " << endl;
+    cout << "├────────────────────────────────────────────┤" << endl;
+    cout << "│ [1] Nama Lagu                              │" << endl;
+    cout << "│ [2] Nama Artist                            │" << endl;
+    cout << "│ [3] Lama Durasi                            │" << endl;
+    cout << "│ [B] Back                                   │" << endl;
+    cout << "└────────────────────────────────────────────┘" << endl;
+    inputMessage();
+    string pilihan;
     cin >> pilihan;
-
-    if (pilihan == 1) {
-        cout << "Masukkan nama lagu yang baru" << endl;
+    clearScreen();
+    if (pilihan == "1") {
+        cout << "┌────────────────────────────────────────────┐" << endl;
+        cout << "│             Mengubah Nama Lagu             │ " << endl;
+        cout << "└────────────────────────────────────────────┘" << endl;
+        cout << "Masukkan nama lagu yang baru: " << endl;
         cin >> newInfo.song_name;
 
-    } else if (pilihan == 2) {
-        cout << "Masukkan nama artist yang baru" << endl;
+    } else if (pilihan == "2") {
+        cout << "┌────────────────────────────────────────────┐" << endl;
+        cout << "│            Mengubah Nama Artist            │ " << endl;
+        cout << "└────────────────────────────────────────────┘" << endl;
+        cout << "Masukkan nama artist yang baru: " << endl;
         cin >> newInfo.artist_name;
-    } else if (pilihan == 3) {
-        cout << "Masukkan lama durasi yang baru" << endl;
-        waktu waktu;
-        cin >> waktu.menit >> waktu.detik;
-        newInfo.duration = waktu;
+
+    } else if (pilihan == "3") {
+        cout << "┌────────────────────────────────────────────┐" << endl;
+        cout << "│            Mengubah Lama Durasi            │ " << endl;
+        cout << "└────────────────────────────────────────────┘" << endl;
+        cout << "Masukkan lama durasi yang baru:" << endl;
+        cout << "Menit: ";
+        cin >> newInfo.duration.menit;
+        cout << "Detik: ";
+        cin >> newInfo.duration.detik;
     }
 
     P->info.song_name = newInfo.song_name;
     P->info.artist_name = newInfo.artist_name;
     P->info.duration = newInfo.duration;
+
+    if (pilihan != "B") {
+        clearScreen();
+        cout << "Informasi lagu berhasil diedit!" << endl;
+    }
 }
 
 void removeSongFromPlaylist(playlistAddress &P, songAddress song){
@@ -247,6 +281,7 @@ void addPlaylist(userAddress &P, playlistAddress Q){
 void addSongToPlaylist(playlistAddress &P, songAddress song){
     //Menambahkan lagu ke playlist user menggunakan elemen relasi MLL, kemudian menambahkan jumlah lagu dalam playlistnya dengan 1
     relasiMLLAddress R = allocateRelasi(song);
+    bool isAdded = true;
     if (P->first_song == nullptr){
         P->first_song = R;
         P->info.playlist_size += 1;
@@ -260,8 +295,13 @@ void addSongToPlaylist(playlistAddress &P, songAddress song){
             R->prev = temp;
             P->info.playlist_size += 1;
         } else {
-            cout << "Lagu sudah ada di dalam playlist!" << endl;
+            isAdded = false;
         }
+    }
+    if (isAdded) {
+        cout << "Lagu berhasil ditambahkan ke playlist " << P->info.playlist_name << "!" << endl;
+    } else {
+        cout << "Lagu sudah ada di dalam playlist!" << endl;
     }
 }
 
@@ -304,6 +344,9 @@ void centerText(const string text, int width) {
 
 void displaySongInfo(songAddress P, int number) {
     //Menampilkan informasi dari suatu lagu dalam format yang rapi
+    if (number == 0) {
+        number = 5;
+    }
     int maxTitleLength = 38;
     int maxArtistLength = 32;
     cout << "│ [" << number << "] ";
@@ -374,7 +417,7 @@ void displayLibrary(Library L, int page, int n) {
     }
 
     cout << "┌────────────────────────────────────────────┐" << endl;
-    cout << "│ [H]ome │            [F]ind Song            │" << endl;
+    cout << "│ [B]ack │            [F]ind Song            │" << endl;
     cout << "├────────────────────────────────────────────┤" << endl;
     i = start;
     while (i <= end && p != nullptr) {
@@ -383,7 +426,7 @@ void displayLibrary(Library L, int page, int n) {
         i = i + 1;
     }
     cout << "│                                            │" << endl;
-    cout << "│ [P]rev     Showing page " << page << " of " << totalPages << "     [N]ext  │" << endl;
+    cout << "│ [<]Prev     Showing page " << page << " of " << totalPages << "    Next[>] │" << endl;
     cout << "└────────────────────────────────────────────┘" << endl;
 }
 
@@ -444,7 +487,7 @@ void displaySongsInPlaylist(playlistAddress P, int page, int n) {
     }
 
     cout << "┌────────────────────────────────────────────┐" << endl;
-    cout << "│ [H]ome │";
+    cout << "│ [B]ack │";
     centerText(P->info.playlist_name, 35);
     cout << "│" << endl;
     cout << "├────────────────────────────────────────────┤" << endl;
@@ -455,7 +498,7 @@ void displaySongsInPlaylist(playlistAddress P, int page, int n) {
         i = i + 1;
     }
     cout << "│                                            │" << endl;
-    cout << "│ [P]rev     Showing page " << page << " of " << totalPages << "     [N]ext  │" << endl;
+    cout << "│ [<]Prev     Showing page " << page << " of " << totalPages << "    Next[>] │" << endl;
     cout << "└────────────────────────────────────────────┘" << endl;
 }
 
@@ -521,7 +564,10 @@ void nextSong(relasiMLLAddress &current, bool &isPlaying) {
         current = current->next;
     } else {
         cout << "Sudah di lagu terakhir dalam playlist." << endl;
-        stopSong(isPlaying);
+        cout << "Kembali ke awal playlist." << endl;
+        while (current->prev != nullptr) {
+            current = current->prev;
+        }
     }
 }
 
@@ -532,6 +578,7 @@ void prevSong(relasiMLLAddress &current, bool &isPlaying) {
         current = current->prev;
     } else {
         cout << "Sudah di lagu pertama dalam playlist." << endl;
+        cout << "Tetap berada di lagu yang sama." << endl;
     }
 }
 
@@ -542,14 +589,20 @@ void nowPlays(bool isPlaying, int width, relasiMLLAddress currentSong) {
         cout << "│";
         centerText(currentSong->song_pointer->info.song_name, width);
         cout << "│" << endl;
+        cout << "│";
+        centerText(currentSong->song_pointer->info.artist_name, width);
+        cout << "│" << endl;
         cout << "├────────────────────────────────────────────┤" << endl;
-        cout << "│    [p]rev    |    [s]top    |    [n]ext    │" << endl;
+        cout << "│    [P]rev    |    [S]top    |    [N]ext    │" << endl;
         cout << "└────────────────────────────────────────────┘" << endl;
     }
 }
 
 void displayPlayListInfo(playlistAddress P, int number) {
     //Menampilkan informasi dari suatu playlist dalam format yang rapi
+    if (number == 0) {
+        number = 5;
+    }
     int maxTitleLength = 38;
 
     cout << "│ [" << number << "] ";
@@ -574,7 +627,7 @@ void displayArtist(Artists A, int page, int n) {
     }
 
     cout << "┌────────────────────────────────────────────┐" << endl;
-    cout << "│ [H]ome │              Artists              │" << endl;
+    cout << "│ [B]ack │              Artists              │" << endl;
     cout << "├────────────────────────────────────────────┤" << endl;
     i = start;
     while (i <= end && P != nullptr) {
@@ -583,7 +636,7 @@ void displayArtist(Artists A, int page, int n) {
         i = i + 1;
     }
     cout << "│                                            │" << endl;
-    cout << "│ [P]rev     Showing page " << page << " of " << totalPages << "     [N]ext  │" << endl;
+    cout << "│ [<]Prev     Showing page " << page << " of " << totalPages << "    Next[>] │" << endl;
     cout << "└────────────────────────────────────────────┘" << endl;
 }
 
@@ -602,7 +655,7 @@ void displayPlaylists(userAddress pU, int page, int n) {
     }
 
     cout << "┌────────────────────────────────────────────┐" << endl;
-    cout << "│ [H]ome │           Your Playlists          │" << endl;
+    cout << "│ [B]ack │           Your Playlists          │" << endl;
     cout << "├────────────────────────────────────────────┤" << endl;
     i = start;
     while (i <= end && P != nullptr) {
@@ -611,6 +664,353 @@ void displayPlaylists(userAddress pU, int page, int n) {
         i = i + 1;
     }
     cout << "│                                            │" << endl;
-    cout << "│ [P]rev     Showing page " << page << " of " << totalPages << "     [N]ext  │" << endl;
+    cout << "│ [<]Prev     Showing page " << page << " of " << totalPages << "    Next[>] │" << endl;
     cout << "└────────────────────────────────────────────┘" << endl;
+}
+
+void prev_page(int &page) {
+    if (page > 1) {
+        page--;
+    }
+}
+
+void next_page(int &page, int totalItems, int itemsPerPage) {
+    int totalPages = (totalItems + itemsPerPage - 1) / itemsPerPage;
+    if (page < totalPages) {
+        page++;
+    }
+}
+
+void adminActionHandler(string input, Library &L, Users &U, songAddress &selectedSong) {
+    if (input == "1") {
+        editSongFromLibrary(L, selectedSong);
+    } else if (input == "2") {
+        deleteSongFromLibrary(L, selectedSong);
+        // Hapus dari playlist user
+        userAddress currentUser = U.first;
+        while (currentUser != nullptr) {
+            playlistAddress currentPlaylist = currentUser->first_playlist;
+            while (currentPlaylist != nullptr) {
+                removeSongFromPlaylist(currentPlaylist, selectedSong);
+                currentPlaylist = currentPlaylist->next;
+            }
+            currentUser = currentUser->next;
+        }
+    } else {
+        clearScreen();
+    }
+}
+
+void adminMenuHandler(string input, Library &L, userAddress &currentUser, Artists &A, Users &U, int contentPerPage) {
+    int page = 1;
+    if (input == "L") {
+        currentUser = nullptr;
+
+    } else if (input == "1") {
+        string pilihanLibrary = "";
+        clearScreen();
+        while (pilihanLibrary != "B") {
+            displayLibrary(L, page, contentPerPage);
+            cin >> pilihanLibrary;
+            if (pilihanLibrary >= "1" && pilihanLibrary <= "5") {
+                int song_number = stoi(pilihanLibrary);
+                songAddress selectedSong = getSongFromLibrary(L, page, contentPerPage, song_number);
+                clearScreen();
+                cout << "┌────────────────────────────────────────────┐" << endl;
+                cout << "│ Anda memilih lagu:                         │" << endl;
+                cout << "│   " << setfill(' ') << setw(41) << left << selectedSong->info.song_name << "│" << endl;
+                cout << "│   " << setfill(' ') << setw(41) << left << "by" + selectedSong->info.artist_name << "│" << endl;
+                cout << "├────────────────────────────────────────────┤" << endl;
+                cout << "│ [1] Edit Lagu                              │" << endl;
+                cout << "│ [2] Hapus Lagu                             │" << endl;
+                cout << "│ [B] Back                                   │" << endl;
+                cout << "└────────────────────────────────────────────┘" << endl;
+                inputMessage();
+                string aksiAdmin;
+                cin >> aksiAdmin;
+                adminActionHandler(aksiAdmin, L, U, selectedSong);
+            } else if (pilihanLibrary == "<") {
+                prev_page(page);
+                clearScreen();
+            } else if (pilihanLibrary == ">") {
+                int totalSongs = getLibrarySize(L);
+                int totalPages = (totalSongs + contentPerPage - 1) / contentPerPage;
+                next_page(page, totalSongs, contentPerPage);
+                clearScreen();
+            } else if (pilihanLibrary == "F") {
+                //Fungsi mencari lagu berdasarkan nama lagu
+                string songName;
+                cout << "Masukkan nama lagu yang ingin dicari: ";
+                cin >> songName;
+                songAddress foundSong = findSong(L, songName);
+                if (foundSong != nullptr) {
+                    cout << "Lagu ditemukan: " << foundSong->info.song_name << " oleh " << foundSong->info.artist_name << endl;
+                    cout << "Pilih aksi: [1] Edit Song  [2] Delete Song  [B]ack" << endl;
+                    string aksiAdmin;
+                    cin >> aksiAdmin;
+                    adminActionHandler(aksiAdmin, L, U, foundSong);
+                } else {
+                    cout << "Lagu dengan nama tersebut tidak ditemukan di library." << endl;
+                }
+            }
+        }
+
+    } else if (input == "2") {
+        song_info info;
+        cout << "Masukkan nama lagu: ";
+        cin >> info.song_name;
+        cout << "Masukkan nama artist: ";
+        cin >> info.artist_name;
+        cout << "Masukkan durasi (menit): ";
+        cin >> info.duration.menit;
+        cout << "Masukkan durasi (detik): ";
+        cin >> info.duration.detik;
+        songAddress P = allocateSong(info);
+        addSongToLibrary(L, P);
+        AddSongToArtists(A, P);
+    }
+}
+
+void userActionHandler(string input, Library L, Artists &A, userAddress currentUser, int page, int contentPerPage, int song_number, relasiMLLAddress &currentSong, bool &isPlaying, songAddress selectedSong) {
+    clearScreen();
+    if (input == "1") {
+        playFromLibrary(L, page, contentPerPage, A, song_number, currentSong, isPlaying);
+        clearScreen();
+    } else if (input == "2") {
+        int page = 1;
+        string pilihanPlayList = "";
+        while (pilihanPlayList != "B") {
+            cout << "Pilih playlist untuk ditambahkan lagu:" << endl;
+            displayPlaylists(currentUser, page, contentPerPage);
+            cout << "┌────────────────────────────────────────────┐" << endl;
+            cout << "│ [+] Tambahkan ke playlist baru             │" << endl;
+            cout << "└────────────────────────────────────────────┘" << endl;
+            inputMessage();
+            cin >> pilihanPlayList;
+            clearScreen();
+
+            if (pilihanPlayList >= "1" && pilihanPlayList <= "5") {
+                int playlist_number = stoi(pilihanPlayList);
+                playlistAddress selectedPlaylist = getPlaylistFromUser(currentUser, page, contentPerPage, playlist_number);
+                addSongToPlaylist(selectedPlaylist, selectedSong);
+
+            } else if (pilihanPlayList == "<") {
+                prev_page(page);
+                clearScreen();
+
+            } else if (pilihanPlayList == ">") {
+                int totalPlaylists = getPlaylistCount(currentUser);
+                next_page(page, totalPlaylists, contentPerPage);
+                clearScreen();
+
+            } else if (pilihanPlayList == "+") {
+                playlist_info newPlaylistInfo;
+                cout << "Masukkan nama playlist baru: ";
+                cin >> newPlaylistInfo.playlist_name;
+                newPlaylistInfo.playlist_size = 0;
+
+                playlistAddress newPlaylist = allocatePlaylist(newPlaylistInfo);
+                addPlaylist(currentUser, newPlaylist);
+                addSongToPlaylist(newPlaylist, selectedSong);
+                cout << "Playlist " << newPlaylistInfo.playlist_name << " berhasil dibuat dan lagu ditambahkan!" << endl;
+                pilihanPlayList = "B";
+            }
+        }
+    }
+}
+
+void userPickSong(string pilihanLibrary, Library L, int page, int contentPerPage, int &song_number, songAddress &selectedSong) {
+    song_number = stoi(pilihanLibrary);
+    selectedSong = getSongFromLibrary(L, page, contentPerPage, song_number);
+    clearScreen();
+    cout << "┌────────────────────────────────────────────┐" << endl;
+    cout << "│ Anda memilih lagu:                         │" << endl;
+    cout << "│   " << setfill(' ') << setw(41) << left << selectedSong->info.song_name << "│" << endl;
+    cout << "│   " << setfill(' ') << setw(41) << left << "by" + selectedSong->info.artist_name << "│" << endl;
+    cout << "├────────────────────────────────────────────┤" << endl;
+    cout << "│ [1] Play lagu                              │" << endl;
+    cout << "│ [2] Tambahkan lagu ke playlist             │" << endl;
+    cout << "│ [B] Back                                   │" << endl;
+    cout << "└────────────────────────────────────────────┘" << endl;
+    inputMessage();
+}
+
+void nowPlaysHandler(string input, relasiMLLAddress &currentSong, bool &isPlaying) {
+    if (input == "P") {
+        clearScreen();
+        prevSong(currentSong, isPlaying);
+    } else if (input == "S") {
+        clearScreen();
+        stopSong(isPlaying);
+    } else if (input == "N") {
+        clearScreen();
+        nextSong(currentSong, isPlaying);
+    }
+}
+
+void userHomePageHandler(string input, userAddress &currentUser, relasiMLLAddress &currentSong, bool &isPlaying, Library &L, Artists &A, int contentPerPage, int box_width) {
+    int page = 1;
+    if (input == "L") {
+        currentUser = nullptr;
+        isPlaying = false;
+
+    } else if (input == "1") {
+        // Library
+        string pilihanLibrary = "";
+        clearScreen();
+        while (pilihanLibrary != "B") {
+            int song_number;
+            songAddress selectedSong;
+            displayLibrary(L, page, contentPerPage);
+            nowPlays(isPlaying, box_width, currentSong);
+            cin >> pilihanLibrary;
+
+            if (pilihanLibrary >= "1" && pilihanLibrary <= "5") {
+                userPickSong(pilihanLibrary, L, page, contentPerPage, song_number, selectedSong);
+                string aksiUser;
+                cin >> aksiUser;
+                userActionHandler(aksiUser, L, A, currentUser, page, contentPerPage, song_number, currentSong, isPlaying, selectedSong);
+            } else if (pilihanLibrary == "<") {
+                prev_page(page);
+                clearScreen();
+            } else if (pilihanLibrary == ">") {
+                int totalSongs = getLibrarySize(L);
+                next_page(page, totalSongs, contentPerPage);
+                clearScreen();
+            } else if (pilihanLibrary == "F") {
+                //Fungsi mencari lagu berdasarkan nama lagu
+                string songName;
+                cout << "Masukkan nama lagu yang ingin dicari: ";
+                cin >> songName;
+                songAddress foundSong = findSong(L, songName);
+                clearScreen();
+
+                if (foundSong != nullptr) {
+                    cout << "┌────────────────────────────────────────────┐" << endl;
+                    cout << "│ Anda memilih lagu:                         │" << endl;
+                    cout << "│   " << setfill(' ') << setw(41) << left << foundSong->info.song_name << "│" << endl;
+                    cout << "│   " << setfill(' ') << setw(41) << left << "by" + foundSong->info.artist_name << "│" << endl;
+                    cout << "├────────────────────────────────────────────┤" << endl;
+                    cout << "│ [1] Play lagu                              │" << endl;
+                    cout << "│ [2] Tambahkan lagu ke playlist             │" << endl;
+                    cout << "│ [B] Back                                   │" << endl;
+                    cout << "└────────────────────────────────────────────┘" << endl;
+                    inputMessage();
+                    string aksiUser;
+                    cin >> aksiUser;
+                    userActionHandler(aksiUser, L, A, currentUser, page, contentPerPage, song_number, currentSong, isPlaying, foundSong);
+                } else {
+                    cout << "Lagu dengan nama tersebut tidak ditemukan di library." << endl;
+                }
+            } else {
+                nowPlaysHandler(pilihanLibrary, currentSong, isPlaying);
+            }
+        }
+
+    } else if (input == "2") {
+        // Artists
+        string pilihanArtist = "";
+        while (pilihanArtist != "B") {
+            clearScreen();
+            displayArtist(A, page, contentPerPage);
+            nowPlays(isPlaying, box_width, currentSong);
+            cin >> pilihanArtist;
+            clearScreen();
+            if (pilihanArtist >= "1" && pilihanArtist <= "5") {
+                int playlist_number = stoi(pilihanArtist);
+                playlistAddress selectedPlaylist = getArtistPlaylistFromArtists(A, page, contentPerPage, playlist_number);
+                int playlistPage = 1;
+
+                string pilihanPlaylist = "";
+                while (pilihanPlaylist != "B") {
+                    int song_number;
+                    songAddress selectedSong;
+                    displaySongsInPlaylist(selectedPlaylist, playlistPage, contentPerPage);
+                    nowPlays(isPlaying, box_width, currentSong);
+                    cin >> pilihanPlaylist;
+
+                    if (pilihanPlaylist >= "1" && pilihanPlaylist <= "5") {
+                        userPickSong(pilihanPlaylist, L, page, contentPerPage, song_number, selectedSong);
+                        string aksiUser;
+                        cin >> aksiUser;
+                        userActionHandler(aksiUser, L, A, currentUser, page, contentPerPage, song_number, currentSong, isPlaying, selectedSong);
+                    } else if (pilihanPlaylist == "<") {
+                        prev_page(page);
+                        clearScreen();
+                    } else if (pilihanPlaylist == ">") {
+                        int totalSongs = getLibrarySize(L);
+                        next_page(page, totalSongs, contentPerPage);
+                        clearScreen();
+                    } else {
+                        nowPlaysHandler(pilihanPlaylist, currentSong, isPlaying);
+                    }
+                }
+
+            } else if (pilihanArtist == "<") {
+                prev_page(page);
+                clearScreen();
+
+            } else if (pilihanArtist == ">") {
+                int totalArtists = getArtistsCount(A);
+                next_page(page, totalArtists, contentPerPage);
+                clearScreen();
+            } else {
+                nowPlaysHandler(pilihanArtist, currentSong, isPlaying);
+            }
+        }
+
+    } else if (input == "3") {
+        // Playlists
+        string pilihanPlaylists = "";
+        while (pilihanPlaylists != "B") {
+            clearScreen();
+            displayPlaylists(currentUser, page, contentPerPage);
+            nowPlays(isPlaying, box_width, currentSong);
+            cin >> pilihanPlaylists;
+            clearScreen();
+            if (pilihanPlaylists >= "1" && pilihanPlaylists <= "5") {
+                int playlist_number = stoi(pilihanPlaylists);
+                playlistAddress selectedPlaylist = getPlaylistFromUser(currentUser, page, contentPerPage, playlist_number);
+                int playlistPage = 1;
+
+                string pilihanPlaylist = "";
+                while (pilihanPlaylist != "B") {
+                    int song_number;
+                    songAddress selectedSong;
+                    displaySongsInPlaylist(selectedPlaylist, playlistPage, contentPerPage);
+                    nowPlays(isPlaying, box_width, currentSong);
+                    cin >> pilihanPlaylist;
+
+                    if (pilihanPlaylist >= "1" && pilihanPlaylist <= "5") {
+                        userPickSong(pilihanPlaylist, L, page, contentPerPage, song_number, selectedSong);
+                        string aksiUser;
+                        cin >> aksiUser;
+                        userActionHandler(aksiUser, L, A, currentUser, page, contentPerPage, song_number, currentSong, isPlaying, selectedSong);
+                    } else if (pilihanPlaylist == "<") {
+                        prev_page(page);
+                        clearScreen();
+                    } else if (pilihanPlaylist == ">") {
+                        int totalSongs = getLibrarySize(L);
+                        next_page(page, totalSongs, contentPerPage);
+                        clearScreen();
+                    } else {
+                        nowPlaysHandler(pilihanPlaylist, currentSong, isPlaying);
+                    }
+                }
+
+            } else if (pilihanPlaylists == "<") {
+                prev_page(page);
+                clearScreen();
+
+            } else if (pilihanPlaylists == ">") {
+                int totalPlaylists = getPlaylistCount(currentUser);
+                next_page(page, totalPlaylists, contentPerPage);
+                clearScreen();
+            } else {
+                nowPlaysHandler(pilihanPlaylists, currentSong, isPlaying);
+            }
+        }
+    } else {
+        nowPlaysHandler(input, currentSong, isPlaying);
+    }
 }
