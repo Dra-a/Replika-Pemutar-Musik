@@ -90,14 +90,14 @@ void displayLibrary(Library L, int page, int n);
 playlistAddress allocatePlaylist(playlist_info info);
 void addPlaylist(userAddress &P, playlistAddress Q);
 void addArtist(Artists &A, playlistAddress P);
-void deletePlaylist(userAddress &P, playlistAddress Q);
+void deletePlaylist(userAddress &P, playlistAddress Q);                 //belum implementasi
 //void editPlaylist(userAddress &P, string playlist_name);                        //belum
 void displayPlaylists(userAddress U, int page, int n);
 void displayArtist(Artists P, int page, int n);
 
 void displaySongsInPlaylist(playlistAddress P, int page, int n);
 void addSongToPlaylist(playlistAddress &P, songAddress song);
-void removeSongFromPlaylist(playlistAddress &P, songAddress song);
+void removeSongFromPlaylist(playlistAddress &P, songAddress song);                 //belum implementasi
 
 // Function dan Procedure User
 userAddress allocateUser(user_info info);
@@ -125,8 +125,7 @@ void next_page(int &page, int totalItems, int itemsPerPage);
 void adminActionHandler(string input, Library &L, Users &U, songAddress &selectedSong);
 void adminMenuHandler(string input, Library &L, userAddress &currentUser, Artists &A, Users &U, int contentPerPage);
 void userActionHandler(string input, Library L, Artists &A, userAddress currentUser, int page, int contentPerPage, int song_number, relasiMLLAddress &currentSong, bool &isPlaying, songAddress selectedSong);
-void userPickSong(string pilihanLibrary, Library L, int page, int contentPerPage);
-void userSongMenuHandler(string input, Library L, int page, int contentPerPage, Artists A, userAddress currentUser, int song_number, relasiMLLAddress &currentSong, bool &isPlaying, songAddress selectedSong);
+void userPickSong(string pilihanLibrary, Library L, int page, int contentPerPage, int &song_number, songAddress &selectedSong);
 void userHomePageHandler(string input, userAddress &currentUser, relasiMLLAddress &currentSong, bool &isPlaying, Library &L, Artists &A, int contentPerPage, int box_width);
 void nowPlaysHandler(string input, relasiMLLAddress &currentSong, bool &isPlaying);
 void playFromPlaylist(playlistAddress P, int page, int n, int song_number, relasiMLLAddress &current, bool &isPlaying);
