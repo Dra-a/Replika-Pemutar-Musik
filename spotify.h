@@ -84,20 +84,21 @@ songAddress findSong(Library L, string song_name);
 void deleteSongFromLibrary(Library &L, songAddress &P);
 void editSongFromLibrary(Library &L, songAddress &P);
 void displayLibrary(Library L, int page, int n);
-//void sortSong(Library &L);                                  //belum
+void sortSongLibrary(Library &L);                             // #belum implementasi
 
 // Function dan Procedure Playlist
 playlistAddress allocatePlaylist(playlist_info info);
 void addPlaylist(userAddress &P, playlistAddress Q);
 void addArtist(Artists &A, playlistAddress P);
-void deletePlaylist(userAddress &P, playlistAddress Q);                 //belum implementasi
-//void editPlaylist(userAddress &P, string playlist_name);                        //belum
+void deletePlaylist(userAddress &P, playlistAddress Q);               
+void editPlaylist(userAddress &P, string playlist_name);             // #belum implementasi        
 void displayPlaylists(userAddress U, int page, int n);
 void displayArtist(Artists P, int page, int n);
 
 void displaySongsInPlaylist(playlistAddress P, int page, int n);
 void addSongToPlaylist(playlistAddress &P, songAddress song);
-void removeSongFromPlaylist(playlistAddress &P, songAddress song);                 //belum implementasi
+void removeSongFromPlaylist(playlistAddress &P, songAddress song);                
+void sortSongPlaylist(playlistAddress &P);                              // #belum implementasi
 
 // Function dan Procedure User
 userAddress allocateUser(user_info info);

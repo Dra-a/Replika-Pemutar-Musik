@@ -1014,3 +1014,122 @@ void userHomePageHandler(string input, userAddress &currentUser, relasiMLLAddres
         nowPlaysHandler(input, currentSong, isPlaying);
     }
 }
+
+void editPlaylist(userAddress &U, playlistAddress &P) {
+    playlist_info newInfo;
+    newInfo.playlist_name = P->info.playlist_name;
+    newInfo.playlist_size = P->info.playlist_size;
+
+    cout << "┌────────────────────────────────────────────┐" << endl;
+    cout << "│ Info playlist mana yang ingin diubah?      │ " << endl;
+    cout << "├────────────────────────────────────────────┤" << endl;
+    cout << "│ [1] Nama Playlist                          │" << endl;
+    cout << "│ [2] Hapus Lagu dari Playlist               │" << endl;
+    cout << "│ [3] Hapus Playlist                         │" << endl;
+    cout << "│ [B] Back                                   │" << endl;
+    cout << "└────────────────────────────────────────────┘" << endl;
+    inputMessage();
+
+    string pilihan;
+    cin >> pilihan;
+    clearScreen();
+
+    if (pilihan == "1") {
+        cout << "┌────────────────────────────────────────────┐" << endl;
+        cout << "│           Mengubah Nama Playlist           │ " << endl;
+        cout << "└────────────────────────────────────────────┘" << endl;
+        cout << "Masukkan nama playlist yang baru: " << endl;
+        cin >> newInfo.playlist_name;
+
+        P->info.playlist_name = newInfo.playlist_name;
+    }
+
+    else if (pilihan == "2") {
+        cout << "┌────────────────────────────────────────────┐" << endl;
+        cout << "│         Menghapus Lagu dari Playlist       │ " << endl;
+        cout << "└────────────────────────────────────────────┘" << endl;
+
+        // tampilkan lagu di playlist
+        displaySongsInPlaylist(P, 1, P->info.playlist_size);
+
+        cout << "Pilih nomor lagu yang ingin dihapus: ";
+        int song_number;
+        cin >> song_number;
+
+        relasiMLLAddress R =
+            getSongFromPlaylist(P, 1, P->info.playlist_size, song_number);
+
+        if (R != NULL) {
+            removeSongFromPlaylist(P, R->song_pointer);
+            cout << "Lagu berhasil dihapus dari playlist!" << endl;
+        } else {
+            cout << "Lagu tidak ditemukan!" << endl;
+        }
+    }
+
+    else if (pilihan == "3") {
+        cout << "┌────────────────────────────────────────────┐" << endl;
+        cout << "│              Hapus Playlist                │ " << endl;
+        cout << "└────────────────────────────────────────────┘" << endl;
+
+        deletePlaylist(U, P);
+        cout << "Playlist berhasil dihapus!" << endl;
+        return;
+    }
+
+    if (pilihan != "B") {
+        clearScreen();
+        cout << "Perubahan playlist berhasil dilakukan!" << endl;
+    }
+}
+
+void sortSongLibrary(Library &L) {
+    songAddress i = L.first;
+
+    while (i != nullptr) {
+        songAddress min = i;
+        songAddress j = i->next;
+
+        while (j != nullptr) {
+            if (j->info.song_name < min->info.song_name) {
+                min = j;
+            }
+            j = j->next;
+        }
+
+        if (min != i) {
+            song_info temp = i->info;
+            i->info = min->info;
+            min->info = temp;
+        }
+
+        i = i->next;
+    }
+}
+
+void sortSongPlaylist(playlistAddress &P) {
+    relasiMLLAddress i = P->first_song;
+
+    while (i != nullptr) {
+        relasiMLLAddress min = i;
+        relasiMLLAddress j = i->next;
+
+        while (j != nullptr) {
+            if (j->song_pointer->info.song_name <
+                min->song_pointer->info.song_name) {
+                min = j;
+            }
+            j = j->next;
+        }
+
+        if (min != i) {
+            songAddress temp = i->song_pointer;
+            i->song_pointer = min->song_pointer;
+            min->song_pointer = temp;
+        }
+
+        i = i->next;
+    }
+}
+
+
