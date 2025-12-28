@@ -17,3 +17,21 @@
 	<windows.h>
 	<iostream>
 
+1765903500 source:c:\users\rani\onedrive\documents\anin\telkom university\semester 3\struktur data\replika-pemutar-musik\main.cpp
+	"spotify.h"
+	<string>
+	<iomanip>
+	<windows.h>
+	<iostream>
+
+1765903500 c:\users\rani\onedrive\documents\anin\telkom university\semester 3\struktur data\replika-pemutar-musik\spotify.h
+	<iostream>
+	<string>
+	<iomanip>
+
+1765903500 source:c:\users\rani\onedrive\documents\anin\telkom university\semester 3\struktur data\replika-pemutar-musik\spotify.cpp
+	"spotify.h"
+	<iostream>
+	<string>
+	<iomanip>
+

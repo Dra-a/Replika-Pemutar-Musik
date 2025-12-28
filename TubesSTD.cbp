@@ -31,7 +31,11 @@
 		<Compiler>
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
+			<Add option="-std=gnu++11" />
 		</Compiler>
+		<Linker>
+			<Add option="-static-libgcc -static-libstdc++" />
+		</Linker>
 		<Unit filename="main.cpp" />
 		<Unit filename="spotify.cpp" />
 		<Unit filename="spotify.h" />
