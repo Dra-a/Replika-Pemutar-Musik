@@ -542,21 +542,15 @@ relasiMLLAddress moveToSimilarSongs(Artists A, songAddress current_song) {
     while (artistPlaylist != nullptr && artistPlaylist->info.playlist_name != artistName) {
         artistPlaylist = artistPlaylist->next;
     }
-    if (artistPlaylist == nullptr || artistPlaylist->info.playlist_size <= 1) {
-        cout << "Tidak ditemukan lagu lain dari artist yang sama." << endl;
-        return A.first->first_song; // Tidak ditemukan playlist artist atau hanya ada 1 lagu dari artist tersebut
-    } else {
-        relasiMLLAddress R = artistPlaylist->first_song;
-        while (R != nullptr) {
-            if (R->song_pointer == current_song) {
-                return R;
-            }
-            R = R->next;
+    relasiMLLAddress R = artistPlaylist->first_song;
+    while (R != nullptr) {
+        if (R->song_pointer == current_song) {
+            return R;
         }
-        cout << "Terdapat error saat memutar lagu tersebut." << endl;
-        return artistPlaylist->first_song; // Kembalikan lagu pertama dari playlist artist sebagai default, seharusnya tidak akan terjadi
+        R = R->next;
     }
-
+    cout << "Terdapat error saat memutar lagu tersebut." << endl;
+    return artistPlaylist->first_song; // Kembalikan lagu pertama dari playlist artist sebagai default, seharusnya tidak akan terjadi
 }
 
 void playFromLibrary(Artists A, songAddress selectedSong, relasiMLLAddress &current, bool &isPlaying) {
@@ -695,10 +689,11 @@ void next_page(int &page, int totalItems, int itemsPerPage) {
     }
 }
 
-void adminActionHandler(string input, Library &L, Users &U, songAddress &selectedSong) {
+void adminActionHandler(string input, Library &L, Users &U, Artists &A, songAddress &selectedSong) {
     if (input == "1") {
         editSongFromLibrary(L, selectedSong);
     } else if (input == "2") {
+        // Hapus dari library
         deleteSongFromLibrary(L, selectedSong);
         // Hapus dari playlist user
         userAddress currentUser = U.first;
@@ -710,6 +705,13 @@ void adminActionHandler(string input, Library &L, Users &U, songAddress &selecte
             }
             currentUser = currentUser->next;
         }
+        // Hapus dari playlist artist
+        playlistAddress P = A.first;
+        while (P != nullptr) {
+            removeSongFromPlaylist(P, selectedSong);
+            P = P->next;
+        }
+
     } else {
         clearScreen();
     }
@@ -742,7 +744,7 @@ void adminMenuHandler(string input, Library &L, userAddress &currentUser, Artist
                 inputMessage();
                 string aksiAdmin;
                 cin >> aksiAdmin;
-                adminActionHandler(aksiAdmin, L, U, selectedSong);
+                adminActionHandler(aksiAdmin, L, U, A, selectedSong);
             } else if (pilihanLibrary == "<") {
                 prev_page(page);
                 clearScreen();
@@ -762,7 +764,7 @@ void adminMenuHandler(string input, Library &L, userAddress &currentUser, Artist
                     cout << "Pilih aksi: [1] Edit Song  [2] Delete Song  [B]ack" << endl;
                     string aksiAdmin;
                     cin >> aksiAdmin;
-                    adminActionHandler(aksiAdmin, L, U, foundSong);
+                    adminActionHandler(aksiAdmin, L, U, A, foundSong);
                 } else {
                     cout << "Lagu dengan nama tersebut tidak ditemukan di library." << endl;
                 }
